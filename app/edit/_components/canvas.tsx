@@ -1,9 +1,27 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
-import { Stage, Layer, Image } from "react-konva";
+import { Stage, Layer, Image, StageProps } from "react-konva";
+import useImage from "use-image";
 
-const ImageEditorCanvas = ({ imgSrc }: { imgSrc: HTMLImageElement }) => {
-  const [image, setImage] = useState<HTMLImageElement>(imgSrc);
+interface ImageEditorCanvasProps {
+  imageUrl: string;
+  width: number;
+  height: number;
+}
+
+const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
+  const [image] = useImage(src, "anonymous");
+
+  if (image) return <Image image={image} {...rest} />;
+  return null;
+};
+
+const ImageEditorCanvas = ({
+  imageUrl,
+  width,
+  height,
+}: ImageEditorCanvasProps) => {
+  const [imgUrl, setImgUrl] = useState<string>(imageUrl);
   const [zoom, setZoom] = useState<number>(0.2);
   const [stageWidth, setStageWidth] = useState<number>(800);
   const [stageHeight, setStageHeight] = useState<number>(600);
@@ -21,14 +39,14 @@ const ImageEditorCanvas = ({ imgSrc }: { imgSrc: HTMLImageElement }) => {
       <div ref={containerRef} className="w-full h-full relative">
         <Stage width={stageWidth} height={stageHeight}>
           <Layer>
-            <Image
-              image={image}
-              width={image.width}
-              height={image.height}
+            <URLImage
+              src={imgUrl}
+              width={width}
+              height={height}
               scaleX={zoom}
               scaleY={zoom}
-              x={(stageWidth - image.width * zoom) / 2}
-              y={(stageHeight - image.height * zoom) / 2}
+              x={(stageWidth - width * zoom) / 2}
+              y={(stageHeight - height * zoom) / 2}
               draggable
             />
           </Layer>

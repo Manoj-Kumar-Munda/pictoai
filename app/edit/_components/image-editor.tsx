@@ -9,6 +9,7 @@ const EditorCanvas = () => {
   const [uploadedImage, setUploadedImage] = useState<HTMLImageElement | null>(
     null
   );
+  const [base64Image, setBase64Image] = useState<string | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -16,6 +17,12 @@ const EditorCanvas = () => {
       const image = new Image();
       image.src = URL.createObjectURL(file);
       setUploadedImage(image);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        setBase64Image(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   }, []);
 
@@ -27,11 +34,15 @@ const EditorCanvas = () => {
     multiple: false,
   });
 
-  if (uploadedImage) {
+  if (uploadedImage && base64Image) {
     return (
       <div className="w-full h-full">
         <div className="w-full h-full bg-white rounded-lg border border-gray-300 overflow-hidden">
-          <ImageEditorCanvas imgSrc={uploadedImage} />
+          <ImageEditorCanvas
+            imageUrl={base64Image}
+            width={uploadedImage.width}
+            height={uploadedImage.height}
+          />
         </div>
       </div>
     );
