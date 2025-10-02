@@ -1,4 +1,4 @@
-import EditorCanvas from "./_components/editor-canvas";
+import EditorCanvas from "./_components/image-editor";
 
 const EditPage = () => {
   return (

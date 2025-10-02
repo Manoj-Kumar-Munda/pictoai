@@ -3,18 +3,19 @@
 import { cn } from "@/lib/utils";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import ImageEditorCanvas from "./canvas";
 
 const EditorCanvas = () => {
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<HTMLImageElement | null>(
+    null
+  );
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setUploadedImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      const image = new Image();
+      image.src = URL.createObjectURL(file);
+      setUploadedImage(image);
     }
   }, []);
 
@@ -30,11 +31,7 @@ const EditorCanvas = () => {
     return (
       <div className="w-full h-full">
         <div className="w-full h-full bg-white rounded-lg border border-gray-300 overflow-hidden">
-          <img
-            src={uploadedImage}
-            alt="Uploaded"
-            className="w-full h-full object-contain"
-          />
+          <ImageEditorCanvas imgSrc={uploadedImage} />
         </div>
       </div>
     );
