@@ -1,7 +1,9 @@
+import EditorCanvas from "./_components/editor-canvas";
+
 const EditPage = () => {
   return (
     <div className="h-full w-full">
-      <h1>Image editor canvas</h1>
+      <EditorCanvas />
     </div>
   );
 };
