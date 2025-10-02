@@ -1,7 +1,7 @@
 const EditPage = () => {
   return (
-    <div>
-      <h1>EditPage</h1>
+    <div className="h-full w-full">
+      <h1>Image editor canvas</h1>
     </div>
   );
 };
