@@ -1,3 +1,4 @@
+"use client";
 import effect1 from "@/app/assets/ai_effects/lightings/black-white-studio.png";
 import { StaticImageData } from "next/image";
 import AIEffectCard from "@/components/effect-card";
@@ -16,7 +17,7 @@ const effects: { name: string; demo: StaticImageData }[] = [
 
 const EditSidebar = () => {
   return (
-    <aside className="h-full bg-black px-4  text-white">
+    <aside className="h-full shrink-0 bg-black px-4 text-white">
       <h2 className="text-lg font-semibold">AI Effects</h2>
 
       <div className="h-full overflow-y-auto">

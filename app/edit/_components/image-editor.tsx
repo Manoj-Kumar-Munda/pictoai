@@ -1,26 +1,27 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import ImageEditorCanvas from "./canvas";
+import useEditingStore from "@/store/editing-store";
 
 const EditorCanvas = () => {
-  const [uploadedImage, setUploadedImage] = useState<HTMLImageElement | null>(
-    null
-  );
-  const [base64Image, setBase64Image] = useState<string | null>(null);
+  const { image, setImage } = useEditingStore();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
-      const image = new Image();
-      image.src = URL.createObjectURL(file);
-      setUploadedImage(image);
+      const imageObject = new Image();
+      imageObject.src = URL.createObjectURL(file);
 
       const reader = new FileReader();
       reader.onload = () => {
-        setBase64Image(reader.result as string);
+        setImage(
+          reader.result as string,
+          imageObject.width,
+          imageObject.height
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -34,14 +35,14 @@ const EditorCanvas = () => {
     multiple: false,
   });
 
-  if (uploadedImage && base64Image) {
+  if (image?.url) {
     return (
       <div className="w-full h-full">
         <div className="w-full h-full bg-white rounded-lg border border-gray-300 overflow-hidden">
           <ImageEditorCanvas
-            imageUrl={base64Image}
-            width={uploadedImage.width}
-            height={uploadedImage.height}
+            imageUrl={image.url}
+            width={image.width}
+            height={image.height}
           />
         </div>
       </div>
