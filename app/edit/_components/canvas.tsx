@@ -21,7 +21,7 @@ const ImageEditorCanvas = ({
   width,
   height,
 }: ImageEditorCanvasProps) => {
-  const [imgUrl, setImgUrl] = useState<string>(imageUrl);
+  const [imgUrl, setImgUrl] = useState<string>("");
   const [zoom, setZoom] = useState<number>(0.2);
   const [stageWidth, setStageWidth] = useState<number>(800);
   const [stageHeight, setStageHeight] = useState<number>(600);
@@ -33,6 +33,10 @@ const ImageEditorCanvas = ({
       setStageHeight(containerRef.current.offsetHeight);
     }
   }, []);
+
+  useEffect(() => {
+    setImgUrl(imageUrl);
+  }, [imageUrl]);
 
   return (
     <div className="w-full h-full">
