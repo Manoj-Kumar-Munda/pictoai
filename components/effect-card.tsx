@@ -6,11 +6,13 @@ import Image, { StaticImageData } from "next/image";
 import { useEffect } from "react";
 
 interface AIEffectCardProps {
+  id: string;
   name: string;
   demo: StaticImageData;
+  prompt: string;
 }
 
-const AIEffectCard = ({ name, demo }: AIEffectCardProps) => {
+const AIEffectCard = ({ id, name, demo, prompt }: AIEffectCardProps) => {
   const { appliedEffects, setAppliedEffects, image, setImage } =
     useEditingStore();
 
@@ -21,9 +23,9 @@ const AIEffectCard = ({ name, demo }: AIEffectCardProps) => {
   });
 
   const handleClick = () => {
-    setAppliedEffects([...appliedEffects, name]);
+    setAppliedEffects([...appliedEffects, { id, prompt }]);
     sendMessage({
-      text: appliedEffects.at(-1) || "",
+      text: prompt,
       files: [
         {
           url: image.url,
@@ -34,7 +36,7 @@ const AIEffectCard = ({ name, demo }: AIEffectCardProps) => {
     });
   };
 
-  const isApplied = appliedEffects.includes(name);
+  const isApplied = appliedEffects.some((effect) => effect.id === id);
 
   useEffect(() => {
     if (messages.length > 0) {

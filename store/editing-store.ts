@@ -1,20 +1,19 @@
-//make a zustand store for editing - store the image, the applied effects, the result of the editing so that we can undo and redo the editing
+import { IEffect } from "@/types";
 import { create } from "zustand";
 
 interface EditingStore {
   image: {
-    
     url: string;
     width: number;
     height: number;
   };
-  appliedEffects: string[];
+  appliedEffects: Omit<IEffect, "demo" | "name">[];
   result: string;
   undo: () => void;
   redo: () => void;
   clear: () => void;
   setImage: (imageUrl: string, width?: number, height?: number) => void;
-  setAppliedEffects: (effects: string[]) => void;
+  setAppliedEffects: (effects: Omit<IEffect, "demo" | "name">[]) => void;
   setResult: (result: string) => void;
 }
 
