@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { Stage, Layer, Image, StageProps } from "react-konva";
 import useImage from "use-image";
+import DownloadButton from "./download-button";
 
 interface ImageEditorCanvasProps {
   imageUrl: string;
@@ -11,7 +12,6 @@ interface ImageEditorCanvasProps {
 
 const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
   const [image] = useImage(src, "anonymous");
-
   if (image) return <Image image={image} {...rest} />;
   return null;
 };
@@ -55,6 +55,11 @@ const ImageEditorCanvas = ({
             />
           </Layer>
         </Stage>
+
+        {/* download button */}
+        <div className="absolute bottom-4 right-4 top-4 z-50">
+          <DownloadButton url={imgUrl} />
+        </div>
 
         {/* zoom buttons + and - */}
         <div className="absolute bottom-4 right-4 bg-foreground rounded-2xl flex gap-2 items-center">
