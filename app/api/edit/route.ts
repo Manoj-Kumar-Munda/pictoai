@@ -15,7 +15,6 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model,
-    system: EFFECTS_LIGHTING_PROMPTS.stripped_shadow,
     messages: convertToModelMessages(messages),
   });
 
