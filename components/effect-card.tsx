@@ -52,7 +52,7 @@ const AIEffectCard = ({ id, name, demo, prompt }: AIEffectCardProps) => {
       key={name}
       className={cn(
         "bg-neutral-200 rounded-lg p-1 cursor-pointer",
-        isApplied && "bg-neutral-800"
+        isApplied && "active-effect"
       )}
       onClick={handleClick}
       role="button"
