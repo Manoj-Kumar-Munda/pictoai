@@ -1,4 +1,4 @@
-import { IEffect } from "@/types";
+import { type EffectProps } from "@/types";
 import { create } from "zustand";
 
 interface EditingStore {
@@ -7,13 +7,13 @@ interface EditingStore {
     width: number;
     height: number;
   };
-  appliedEffects: Omit<IEffect, "demo" | "name">[];
+  appliedEffect: EffectProps | null;
   result: string;
   undo: () => void;
   redo: () => void;
   clear: () => void;
   setImage: (imageUrl: string, width?: number, height?: number) => void;
-  setAppliedEffects: (effects: Omit<IEffect, "demo" | "name">[]) => void;
+  setAppliedEffect: (effect: EffectProps) => void;
   setResult: (result: string) => void;
 }
 
@@ -23,14 +23,15 @@ const useEditingStore = create<EditingStore>((set) => ({
     width: 0,
     height: 0,
   },
-  appliedEffects: [],
+  appliedEffect: null,
   result: "",
   undo: () => {},
   redo: () => {},
   clear: () => {},
   setImage: (imageUrl, width = 600, height = 400) =>
     set({ image: { url: imageUrl, width, height } }),
-  setAppliedEffects: (effects) => set({ appliedEffects: effects }),
+
+  setAppliedEffect: (effect) => set({ appliedEffect: effect }),
   setResult: (result) => set({ result }),
 }));
 

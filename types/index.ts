@@ -1,6 +1,6 @@
 import { StaticImageData } from "next/image";
 
-export interface IEffect {
+export interface EffectProps {
   id: string;
   name: string;
   demo: StaticImageData;

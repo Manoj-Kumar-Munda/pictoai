@@ -2,18 +2,13 @@ import { cn } from "@/lib/utils";
 import useEditingStore from "@/store/editing-store";
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
-import Image, { StaticImageData } from "next/image";
-import { useEffect } from "react";
+import Image from "next/image";
+import { useEffect, useMemo } from "react";
+import { EffectProps } from "@/types";
 
-interface AIEffectCardProps {
-  id: string;
-  name: string;
-  demo: StaticImageData;
-  prompt: string;
-}
-
-const AIEffectCard = ({ id, name, demo, prompt }: AIEffectCardProps) => {
-  const { appliedEffects, setAppliedEffects, image, setImage } =
+const AIEffectCard = (props: EffectProps) => {
+  const { id, name, demo, prompt } = props;
+  const { appliedEffect, setAppliedEffect, image, setImage } =
     useEditingStore();
 
   const { messages, sendMessage, status } = useChat({
@@ -23,7 +18,7 @@ const AIEffectCard = ({ id, name, demo, prompt }: AIEffectCardProps) => {
   });
 
   const handleClick = () => {
-    setAppliedEffects([...appliedEffects, { id, prompt }]);
+    setAppliedEffect(props);
     sendMessage({
       text: prompt,
       files: [
@@ -36,7 +31,7 @@ const AIEffectCard = ({ id, name, demo, prompt }: AIEffectCardProps) => {
     });
   };
 
-  const isApplied = appliedEffects.some((effect) => effect.id === id);
+  const isApplied = appliedEffect?.id === id;
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -51,7 +46,7 @@ const AIEffectCard = ({ id, name, demo, prompt }: AIEffectCardProps) => {
     <div
       key={name}
       className={cn(
-        "bg-neutral-200 rounded-lg p-1 cursor-pointer",
+        "bg-neutral-200 border p-0.5 cursor-pointer",
         isApplied && "active-effect"
       )}
       onClick={handleClick}
@@ -61,9 +56,11 @@ const AIEffectCard = ({ id, name, demo, prompt }: AIEffectCardProps) => {
       <Image
         src={demo}
         alt={name}
-        className="w-24 h-24 object-cover object-top rounded-md"
+        className="w-20 h-20 object-cover object-top"
       />
-      <p className="text-sm font-bold text-center text-neutral-800">{name}</p>
+      <p className="text-[10px] font-medium text-center text-neutral-800">
+        {name}
+      </p>
     </div>
   );
 };

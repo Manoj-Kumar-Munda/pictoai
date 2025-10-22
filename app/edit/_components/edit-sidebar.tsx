@@ -4,9 +4,9 @@ import AIEffectCard from "@/components/effect-card";
 import effect2 from "@/app/assets/ai_effects/lightings/low-key.png";
 import { EFFECTS_LIGHTING_PROMPTS } from "@/app/constants/prompts";
 import { nanoid } from "nanoid";
-import { type IEffect } from "@/types";
+import { type EffectProps } from "@/types";
 
-const effects: IEffect[] = [
+const effects: EffectProps[] = [
   {
     id: nanoid(),
     name: "Window Stripe",
@@ -17,7 +17,7 @@ const effects: IEffect[] = [
     id: nanoid(),
     name: "Low-key",
     demo: effect2,
-    prompt: "Low-key lighting",
+    prompt: EFFECTS_LIGHTING_PROMPTS.low_key,
   },
 ];
 
