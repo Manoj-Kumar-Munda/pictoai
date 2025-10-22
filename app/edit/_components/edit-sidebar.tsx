@@ -1,25 +1,5 @@
-"use client";
-import effect1 from "@/app/assets/ai_effects/lightings/black-white-studio.png";
 import AIEffectCard from "@/components/effect-card";
-import effect2 from "@/app/assets/ai_effects/lightings/low-key.png";
-import { EFFECTS_LIGHTING_PROMPTS } from "@/app/constants/prompts";
-import { nanoid } from "nanoid";
-import { type EffectProps } from "@/types";
-
-const effects: EffectProps[] = [
-  {
-    id: nanoid(),
-    name: "Window Stripe",
-    demo: effect1,
-    prompt: EFFECTS_LIGHTING_PROMPTS.stripped_shadow,
-  },
-  {
-    id: nanoid(),
-    name: "Low-key",
-    demo: effect2,
-    prompt: EFFECTS_LIGHTING_PROMPTS.low_key,
-  },
-];
+import { effects } from "@/app/constants/effects";
 
 const EditSidebar = () => {
   return (

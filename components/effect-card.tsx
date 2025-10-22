@@ -1,9 +1,10 @@
+"use client";
 import { cn } from "@/lib/utils";
 import useEditingStore from "@/store/editing-store";
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
 import Image from "next/image";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { EffectProps } from "@/types";
 
 const AIEffectCard = (props: EffectProps) => {
