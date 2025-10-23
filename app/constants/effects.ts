@@ -4,6 +4,7 @@ import { EFFECTS_LIGHTING_PROMPTS } from "./prompts";
 import effect1 from "@/app/assets/ai_effects/lightings/black-white-studio.png";
 import effect2 from "@/app/assets/ai_effects/lightings/low-key.png";
 import effect3 from "@/app/assets/ai_effects/lightings/neon-noir.png";
+import effect4 from "@/app/assets/ai_effects/lightings/golden.png";
 
 const effects: EffectProps[] = [
   {
@@ -23,6 +24,12 @@ const effects: EffectProps[] = [
     name: "Neon Noir",
     demo: effect3,
     prompt: EFFECTS_LIGHTING_PROMPTS.neon_noir,
+  },
+  {
+    id: nanoid(),
+    name: "Golden Silhouette",
+    demo: effect4,
+    prompt: EFFECTS_LIGHTING_PROMPTS.Golden_Silhouette,
   },
 ];
 

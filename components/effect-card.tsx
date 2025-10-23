@@ -59,7 +59,7 @@ const AIEffectCard = (props: EffectProps) => {
         alt={name}
         className="w-20 h-20 object-cover object-top"
       />
-      <p className="text-[10px] font-medium text-center text-neutral-800">
+      <p className="text-[10px] text-center text-neutral-800">
         {name}
       </p>
     </div>
