@@ -47,18 +47,22 @@ const AIEffectCard = (props: EffectProps) => {
     <div
       key={name}
       className={cn(
-        "bg-neutral-200 border p-0.5 cursor-pointer",
+        "bg-neutral-200 border p-0.5 cursor-pointer w-fit ",
         isApplied && "active-effect"
       )}
       onClick={handleClick}
       role="button"
       tabIndex={0}
     >
-      <Image
-        src={demo}
-        alt={name}
-        className="w-20 h-20 object-cover object-top"
-      />
+      {demo ? (
+        <Image
+          src={demo}
+          alt={name}
+          className="w-20 h-20 object-cover object-top"
+        />
+      ) : (
+        <div className="size-20 bg-neutral-600" />
+      )}
       <p className="text-[10px] text-center font-medium text-neutral-800">
         {name}
       </p>

@@ -8,3 +8,8 @@ export const EFFECTS_LIGHTING_PROMPTS = {
   Golden_Silhouette:
     "side profile of the person provided in the image, intensely backlit with a warm, golden-white rim light. Strong silhouette against a pure black background. Dramatic, high-contrast studio portrait with a mysterious mood.",
 };
+
+export const TOOLS_PROMPTS = {
+  magic_eraser:
+    "Analyze the image and identify the primary object that is painted red. Select this red object and seamlessly remove it. Using your 'Peel-and-Reveal' inpainting capability, intelligently reconstruct the background and any occluded elements with photorealistic accuracy, ensuring the final image matches the original lighting, texture, and context.",
+};
