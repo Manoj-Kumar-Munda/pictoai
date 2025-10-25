@@ -27,6 +27,16 @@ const ImageEditorCanvas = ({
   const [stageHeight, setStageHeight] = useState<number>(600);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const handleZoomIn = () => {
+    setZoom((prevZoom) => prevZoom + 0.1);
+  };
+
+  const handleZoomOut = () => {
+    console.log("Hello");
+
+    setZoom((prevZoom) => Math.max(prevZoom - 0.1, 0.1));
+  };
+
   useEffect(() => {
     if (containerRef.current) {
       setStageWidth(containerRef.current.offsetWidth);
@@ -57,25 +67,17 @@ const ImageEditorCanvas = ({
         </Stage>
 
         {/* download button */}
-        <div className="absolute bottom-4 right-4 top-4 z-50">
+        <div className="absolute  right-4 top-4 z-50 border">
           <DownloadButton url={imgUrl} />
         </div>
 
         {/* zoom buttons + and - */}
-        <div className="absolute bottom-4 right-4 bg-foreground rounded-2xl flex gap-2 items-center">
-          <Button
-            variant="default"
-            size="icon"
-            onClick={() => setZoom(zoom + 0.1)}
-          >
+        <div className="absolute bottom-4 right-4 bg-foreground rounded-2xl flex gap-2 z-10 items-center">
+          <Button variant="default" size="icon" className="cursor-pointer" onClick={handleZoomIn}>
             +
           </Button>
           <span className="text-sm text-white">Zoom: {zoom.toFixed(1)}</span>
-          <Button
-            variant="default"
-            size="icon"
-            onClick={() => setZoom(zoom - 0.1)}
-          >
+          <Button variant="default" size="icon" onClick={handleZoomOut} className="cursor-pointer">
             -
           </Button>
         </div>
