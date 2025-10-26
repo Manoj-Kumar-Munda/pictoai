@@ -1,4 +1,4 @@
-import { type EffectProps } from "@/types";
+import { type EffectProps, type ToolProps } from "@/types";
 import { create } from "zustand";
 
 interface EditingStore {
@@ -8,12 +8,14 @@ interface EditingStore {
     height: number;
   };
   appliedEffect: EffectProps | null;
+  appliedTool: ToolProps | null;
   result: string;
   undo: () => void;
   redo: () => void;
   clear: () => void;
   setImage: (imageUrl: string, width?: number, height?: number) => void;
   setAppliedEffect: (effect: EffectProps) => void;
+  setAppliedTool: (tool: ToolProps) => void;
   setResult: (result: string) => void;
 }
 
@@ -24,6 +26,7 @@ const useEditingStore = create<EditingStore>((set) => ({
     height: 0,
   },
   appliedEffect: null,
+  appliedTool: null,
   result: "",
   undo: () => {},
   redo: () => {},
@@ -32,6 +35,7 @@ const useEditingStore = create<EditingStore>((set) => ({
     set({ image: { url: imageUrl, width, height } }),
 
   setAppliedEffect: (effect) => set({ appliedEffect: effect }),
+  setAppliedTool: (tool) => set({ appliedTool: tool }),
   setResult: (result) => set({ result }),
 }));
 

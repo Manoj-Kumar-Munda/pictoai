@@ -1,15 +1,18 @@
+"use client";
 import AIEffectCard from "@/components/effect-card";
 import { effects } from "@/app/constants/effects";
 import Heading from "@/components/heading";
+
+import EditTool from "@/components/edit-tool";
 import { tools } from "@/app/constants/tools";
 
 const EditSidebar = () => {
   return (
-    <aside className="h-full shrink-0 bg-black px-4 text-white">
+    <aside className="h-full shrink-0 bg-black px-4 text-white space-y-2">
       <div className="space-y-1">
         <Heading>Tools</Heading>
         {tools.map((tool) => (
-          <AIEffectCard key={tool.name} {...tool} />
+          <EditTool key={tool.name} {...tool} />
         ))}
       </div>
       <div className="space-y-1">
