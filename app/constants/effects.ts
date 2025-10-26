@@ -10,25 +10,25 @@ const effects: EffectProps[] = [
   {
     id: nanoid(),
     name: "Window Stripe",
-    demo: effect1,
+    picture: effect1,
     prompt: EFFECTS_LIGHTING_PROMPTS.stripped_shadow,
   },
   {
     id: nanoid(),
     name: "Low-key",
-    demo: effect2,
+    picture: effect2,
     prompt: EFFECTS_LIGHTING_PROMPTS.low_key,
   },
   {
     id: nanoid(),
     name: "Neon Noir",
-    demo: effect3,
+    picture: effect3,
     prompt: EFFECTS_LIGHTING_PROMPTS.neon_noir,
   },
   {
     id: nanoid(),
     name: "Golden Silhouette",
-    demo: effect4,
+    picture: effect4,
     prompt: EFFECTS_LIGHTING_PROMPTS.Golden_Silhouette,
   },
 ];
