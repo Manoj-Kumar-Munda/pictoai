@@ -1,14 +1,13 @@
 "use client";
-import { cn } from "@/lib/utils";
 import useEditingStore from "@/store/editing-store";
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
-import Image from "next/image";
 import { useEffect } from "react";
 import { EffectProps } from "@/types";
+import Thumbnail from "./thumbnail";
 
 const AIEffectCard = (props: EffectProps) => {
-  const { id, name, demo, prompt } = props;
+  const { id, name, picture, prompt } = props;
   const { appliedEffect, setAppliedEffect, image, setImage } =
     useEditingStore();
 
@@ -44,29 +43,12 @@ const AIEffectCard = (props: EffectProps) => {
   }, [messages?.length]);
 
   return (
-    <div
-      key={name}
-      className={cn(
-        "bg-neutral-200 border p-0.5 cursor-pointer w-fit ",
-        isApplied && "active-effect"
-      )}
+    <Thumbnail
+      name={name}
+      picture={picture}
+      isApplied={isApplied}
       onClick={handleClick}
-      role="button"
-      tabIndex={0}
-    >
-      {demo ? (
-        <Image
-          src={demo}
-          alt={name}
-          className="w-20 h-20 object-cover object-top"
-        />
-      ) : (
-        <div className="size-20 bg-neutral-600" />
-      )}
-      <p className="text-[10px] text-center font-medium text-neutral-800">
-        {name}
-      </p>
-    </div>
+    />
   );
 };
 
