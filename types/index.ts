@@ -10,7 +10,7 @@ type ToolTypes =
 export interface EffectProps {
   id: string;
   name: string;
-  picture?: StaticImageData;
+  picture?: string;
   prompt: string;
 }
 

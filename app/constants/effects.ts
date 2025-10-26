@@ -10,25 +10,25 @@ const effects: EffectProps[] = [
   {
     id: nanoid(),
     name: "Window Stripe",
-    picture: effect1,
+    picture: `/PictoAI/black-white-studio.png`,
     prompt: EFFECTS_LIGHTING_PROMPTS.stripped_shadow,
   },
   {
     id: nanoid(),
     name: "Low-key",
-    picture: effect2,
+    picture: "/PictoAI/low-key.png",
     prompt: EFFECTS_LIGHTING_PROMPTS.low_key,
   },
   {
     id: nanoid(),
     name: "Neon Noir",
-    picture: effect3,
+    picture: "/PictoAI/neon-noir.png",
     prompt: EFFECTS_LIGHTING_PROMPTS.neon_noir,
   },
   {
     id: nanoid(),
     name: "Golden Silhouette",
-    picture: effect4,
+    picture: "/PictoAI/golden.png",
     prompt: EFFECTS_LIGHTING_PROMPTS.Golden_Silhouette,
   },
 ];
