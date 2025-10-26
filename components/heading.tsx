@@ -1,6 +1,6 @@
 const Heading = ({ children }: { children: React.ReactNode }) => {
   return (
-    <h2 className="font-bold text-transparent bg-clip-text active-effect">
+    <h2 className="font-bold text-secondary">
       {children}
     </h2>
   );
