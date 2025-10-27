@@ -14,8 +14,8 @@ export interface EffectProps {
   prompt: string;
 }
 
-
 export interface ToolProps extends Omit<EffectProps, "picture"> {
   tool_id: ToolTypes;
   icon?: React.ElementType<{ className?: string }>;
+  description: string;
 }
