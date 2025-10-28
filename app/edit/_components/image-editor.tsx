@@ -39,11 +39,7 @@ const EditorCanvas = () => {
     return (
       <div className="w-full h-full">
         <div className="w-full h-full bg-white rounded-lg border border-gray-300 overflow-hidden">
-          <ImageEditorCanvas
-            imageUrl={image.url}
-            width={image.width}
-            height={image.height}
-          />
+          <ImageEditorCanvas />
         </div>
       </div>
     );

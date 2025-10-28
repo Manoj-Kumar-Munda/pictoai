@@ -8,3 +8,8 @@ export const EFFECTS_LIGHTING_PROMPTS = {
   Golden_Silhouette:
     "side profile of the person provided in the image, intensely backlit with a warm, golden-white rim light. Strong silhouette against a pure black background. Dramatic, high-contrast studio portrait with a mysterious mood.",
 };
+
+export const TOOLS_PROMPTS = {
+  magic_eraser:
+    "Remove the painted object from the image keep the rest image as it is.",
+};

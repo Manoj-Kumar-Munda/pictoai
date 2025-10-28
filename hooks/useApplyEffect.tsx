@@ -1,24 +1,18 @@
 "use client";
 import useEditingStore from "@/store/editing-store";
-import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import { useEffect } from "react";
-import { EffectProps } from "@/types";
-import Thumbnail from "./thumbnail";
 
-const AIEffectCard = (props: EffectProps) => {
-  const { id, name, picture, prompt } = props;
-  const { appliedEffect, setAppliedEffect, image, setImage } =
-    useEditingStore();
-
+const useApplyEffect = () => {
+  const { image, setImage } = useEditingStore();
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/edit",
     }),
   });
 
-  const handleClick = () => {
-    setAppliedEffect(props);
+  const handleSendMessage = (prompt: string) => {
     sendMessage({
       text: prompt,
       files: [
@@ -31,8 +25,6 @@ const AIEffectCard = (props: EffectProps) => {
     });
   };
 
-  const isApplied = appliedEffect?.id === id;
-
   useEffect(() => {
     if (messages.length > 0) {
       const result = messages.at(-1)?.parts?.at(-1);
@@ -42,14 +34,7 @@ const AIEffectCard = (props: EffectProps) => {
     }
   }, [messages?.length]);
 
-  return (
-    <Thumbnail
-      name={name}
-      picture={picture}
-      isApplied={isApplied}
-      onClick={handleClick}
-    />
-  );
+  return { status, handleSendMessage };
 };
 
-export default AIEffectCard;
+export default useApplyEffect;

@@ -1,4 +1,3 @@
-import { EFFECTS_LIGHTING_PROMPTS } from "@/app/constants/prompts";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { convertToModelMessages, streamText, UIMessage } from "ai";
 
@@ -16,6 +15,11 @@ export async function POST(req: Request) {
   const result = streamText({
     model,
     messages: convertToModelMessages(messages),
+    providerOptions: {
+      google: {
+        responseModalities: ["IMAGE"],
+      },
+    },
   });
 
   return result.toUIMessageStreamResponse();
