@@ -5,6 +5,7 @@ interface InPaintStore {
   setBrushSize: (size: number) => void;
   lines: { points: number[] }[];
   setLines: (lines: { points: number[] }[]) => void;
+  clearLines: () => void;
 }
 
 const useInPaintStore = create<InPaintStore>((set) => ({
@@ -12,6 +13,7 @@ const useInPaintStore = create<InPaintStore>((set) => ({
   setBrushSize: (size) => set({ brushSize: size }),
   lines: [],
   setLines: (lines) => set({ lines }),
+  clearLines: () => set({ lines: [] }),
 }));
 
 export default useInPaintStore;

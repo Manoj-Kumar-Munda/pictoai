@@ -8,6 +8,7 @@ import useEditingStore from "@/store/editing-store";
 
 const EditorCanvas = () => {
   const { image, setImage } = useEditingStore();
+  
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {

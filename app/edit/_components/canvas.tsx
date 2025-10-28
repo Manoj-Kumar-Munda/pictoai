@@ -8,6 +8,7 @@ import React from "react";
 import { KonvaEventObject } from "konva/lib/Node";
 import MagicEraserPopup from "@/tools/magic-eraser";
 import Konva from "konva";
+import useInPaintStore from "@/store/inpaint-store";
 
 interface ImageEditorCanvasProps {
   imageUrl: string;
@@ -31,9 +32,9 @@ const ImageEditorCanvas = ({
   const [stageWidth, setStageWidth] = useState<number>(800);
   const [stageHeight, setStageHeight] = useState<number>(600);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [lines, setLines] = useState<{ points: number[] }[]>([]);
 
-  const currentTool = useEditingStore((state) => state.appliedTool);
+  const { appliedTool: currentTool, setImage } = useEditingStore();
+  const { lines, setLines, clearLines, brushSize } = useInPaintStore();
   const isDrawing = useRef(false);
   const stageRef = useRef<Konva.Stage>(null);
   const handleZoomIn = () => {
@@ -51,7 +52,14 @@ const ImageEditorCanvas = ({
     if (!stage) return;
     const point = stage.getPointerPosition();
     if (!point) return;
-    setLines((prev) => [...prev, { points: [point.x, point.y] }]);
+
+    // Convert screen coordinates to image local coordinates
+    const imageGroup = stage.findOne("#imageGroup");
+    if (!imageGroup) return;
+    const transform = imageGroup.getAbsoluteTransform().copy().invert();
+    const localPoint = transform.point(point);
+
+    setLines([...lines, { points: [localPoint.x, localPoint.y] }]);
   };
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
@@ -61,20 +69,73 @@ const ImageEditorCanvas = ({
     const point = stage.getPointerPosition();
     if (!point) return;
 
-    setLines((prev) => {
-      if (prev.length === 0) return prev;
-      const newLines = [...prev];
-      const lastIndex = newLines.length - 1;
-      newLines[lastIndex] = {
-        ...newLines[lastIndex],
-        points: [...newLines[lastIndex].points, point.x, point.y],
-      };
-      return newLines;
-    });
+    // Convert screen coordinates to image local coordinates
+    const imageGroup = stage.findOne("#imageGroup");
+    if (!imageGroup) return;
+    const transform = imageGroup.getAbsoluteTransform().copy().invert();
+    const localPoint = transform.point(point);
+
+    if (lines.length === 0) return;
+    const newLines = [...lines];
+    const lastIndex = newLines.length - 1;
+    newLines[lastIndex] = {
+      ...newLines[lastIndex],
+      points: [...newLines[lastIndex].points, localPoint.x, localPoint.y],
+    };
+    setLines(newLines);
   };
 
   const handleMouseUp = () => {
     isDrawing.current = false;
+
+    // Create a temporary stage to merge the image with the painted lines
+    const tempStage = new Konva.Stage({
+      container: document.createElement("div"),
+      width: width,
+      height: height,
+    });
+
+    const tempLayer = new Konva.Layer();
+    tempStage.add(tempLayer);
+
+    const tempImage = new window.Image();
+    tempImage.crossOrigin = "anonymous";
+    tempImage.onload = () => {
+      const konvaImage = new Konva.Image({
+        image: tempImage,
+        width: width,
+        height: height,
+      });
+      tempLayer.add(konvaImage);
+
+      // Add all the painted lines
+      lines.forEach((line) => {
+        const konvaLine = new Konva.Line({
+          points: line.points,
+          stroke: "#df4b26",
+          strokeWidth: brushSize,
+          tension: 0.5,
+          lineCap: "round",
+          lineJoin: "round",
+          globalCompositeOperation: "source-over",
+          opacity: 0.5,
+        });
+        tempLayer.add(konvaLine);
+      });
+
+      tempLayer.batchDraw();
+      const uri = tempStage.toDataURL({
+        mimeType: "image/png",
+        quality: 1,
+      });
+
+      setImage(uri, width, height);
+      clearLines();
+
+      // Cleanup
+      tempStage.destroy();
+    };
+    tempImage.src = imgUrl;
   };
 
   useEffect(() => {
@@ -116,22 +177,20 @@ const ImageEditorCanvas = ({
                 height={height}
                 draggable={!isDrawing.current}
               />
+              {lines.map((line, i) => (
+                <Line
+                  key={i}
+                  points={line.points}
+                  stroke={"#df4b26"}
+                  strokeWidth={brushSize}
+                  tension={0.5}
+                  lineCap="round"
+                  lineJoin="round"
+                  globalCompositeOperation={"source-over"}
+                  opacity={0.5}
+                />
+              ))}
             </Group>
-          </Layer>
-          <Layer>
-            {lines.map((line, i) => (
-              <Line
-                key={i}
-                points={line.points}
-                stroke={"#df4b26"}
-                strokeWidth={30}
-                tension={0.5}
-                lineCap="round"
-                lineJoin="round"
-                globalCompositeOperation={"source-over"}
-                opacity={0.5}
-              />
-            ))}
           </Layer>
         </Stage>
 

@@ -15,7 +15,6 @@ const MagicEraserPopup = () => {
     if (!image || !currentTool) return;
     handleSendMessage(currentTool.prompt);
   };
-  console.log("status:", status);
 
   return (
     <div className="absolute top-4 left-4 bg-white shadow p-4 z-10 rounded-md max-w-72 ">
@@ -40,11 +39,12 @@ const MagicEraserPopup = () => {
       </div>
 
       <button
-        className="mt-2 flex gap-2 w-full active-effect text-xs font-semibold items-center justify-center py-1.5 rounded text-neutral-700 cursor-pointer hover:brightness-90 transition-all duration-300"
+        className="mt-2 flex gap-2 w-full active-effect text-xs font-semibold items-center justify-center py-1.5 rounded text-neutral-700 cursor-pointer hover:brightness-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={handleRemove}
+        disabled={status === "streaming" || status === "submitted"}
       >
         <EraserIcon className="size-4" />
-        Remove
+        {status === "streaming" || status === "submitted" ? "Removing..." : "Remove"}
       </button>
     </div>
   );
