@@ -1,19 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
-import {
-  Stage,
-  Layer,
-  Image,
-  StageProps,
-  Group,
-  Line,
-} from "react-konva";
+import { Stage, Layer, Image, StageProps, Group, Line } from "react-konva";
 import useImage from "use-image";
 import DownloadButton from "./download-button";
 import useEditingStore from "@/store/editing-store";
 import React from "react";
 import { KonvaEventObject } from "konva/lib/Node";
 import MagicEraserPopup from "@/tools/magic-eraser";
+import Konva from "konva";
 
 interface ImageEditorCanvasProps {
   imageUrl: string;
@@ -41,7 +35,7 @@ const ImageEditorCanvas = ({
 
   const currentTool = useEditingStore((state) => state.appliedTool);
   const isDrawing = useRef(false);
-
+  const stageRef = useRef<Konva.Stage>(null);
   const handleZoomIn = () => {
     setZoom((prevZoom) => prevZoom + 0.1);
   };
@@ -106,6 +100,7 @@ const ImageEditorCanvas = ({
           // onTouchStart={handleMouseDown}
           // onTouchMove={handleMouseMove}
           onTouchEnd={handleMouseUp}
+          ref={stageRef}
         >
           <Layer>
             <Group

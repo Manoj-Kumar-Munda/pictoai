@@ -1,3 +1,4 @@
+import useApplyEffect from "@/hooks/useApplyEffect";
 import useEditingStore from "@/store/editing-store";
 import useInPaintStore from "@/store/inpaint-store";
 import { EraserIcon } from "lucide-react";
@@ -6,8 +7,16 @@ const MIN_BRUSH_SIZE = 5;
 const MAX_BRUSH_SIZE = 100;
 
 const MagicEraserPopup = () => {
-  const currentTool = useEditingStore((state) => state.appliedTool);
+  const { appliedTool: currentTool, image, setImage } = useEditingStore();
   const { brushSize, setBrushSize } = useInPaintStore();
+  const { handleSendMessage, status } = useApplyEffect();
+
+  const handleRemove = () => {
+    if (!image || !currentTool) return;
+    handleSendMessage(currentTool.prompt);
+  };
+  console.log("status:", status);
+
   return (
     <div className="absolute top-4 left-4 bg-white shadow p-4 z-10 rounded-md max-w-72 ">
       <h3 className="text-primary font-semibold text-sm">Magic Eraser</h3>
@@ -30,7 +39,10 @@ const MagicEraserPopup = () => {
         <span className="ml-auto text-xs font-medium">{brushSize}</span>
       </div>
 
-      <button className="mt-2 flex gap-2 w-full active-effect text-xs font-semibold items-center justify-center py-1.5 rounded text-neutral-700 cursor-pointer hover:brightness-90 transition-all duration-300">
+      <button
+        className="mt-2 flex gap-2 w-full active-effect text-xs font-semibold items-center justify-center py-1.5 rounded text-neutral-700 cursor-pointer hover:brightness-90 transition-all duration-300"
+        onClick={handleRemove}
+      >
         <EraserIcon className="size-4" />
         Remove
       </button>
