@@ -1,12 +1,8 @@
-import { type EffectProps, type ToolProps } from "@/types";
+import { ImageProps, type EffectProps, type ToolProps } from "@/types";
 import { create } from "zustand";
 
 interface EditingStore {
-  image: {
-    url: string;
-    width: number;
-    height: number;
-  };
+  image: ImageProps;
   appliedEffect: EffectProps | null;
   appliedTool: ToolProps | null;
   result: string;

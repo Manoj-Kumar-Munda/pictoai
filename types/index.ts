@@ -1,4 +1,3 @@
-import { StaticImageData } from "next/image";
 import React from "react";
 
 type ToolTypes =
@@ -18,4 +17,10 @@ export interface ToolProps extends Omit<EffectProps, "picture"> {
   tool_id: ToolTypes;
   icon?: React.ElementType<{ className?: string }>;
   description: string;
+}
+
+export interface ImageProps {
+  url: string;
+  width: number;
+  height: number;
 }
