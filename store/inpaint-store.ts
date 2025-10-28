@@ -1,3 +1,4 @@
+import { MIN_BRUSH_SIZE } from "@/app/constants/tools";
 import { create } from "zustand";
 
 interface InPaintStore {
@@ -9,7 +10,7 @@ interface InPaintStore {
 }
 
 const useInPaintStore = create<InPaintStore>((set) => ({
-  brushSize: 30,
+  brushSize: MIN_BRUSH_SIZE,
   setBrushSize: (size) => set({ brushSize: size }),
   lines: [],
   setLines: (lines) => set({ lines }),

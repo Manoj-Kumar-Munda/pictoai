@@ -1,18 +1,16 @@
+import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from "@/app/constants/tools";
 import useApplyEffect from "@/hooks/useApplyEffect";
 import useEditingStore from "@/store/editing-store";
 import useInPaintStore from "@/store/inpaint-store";
 import { EraserIcon } from "lucide-react";
 
-const MIN_BRUSH_SIZE = 5;
-const MAX_BRUSH_SIZE = 100;
-
 const MagicEraserPopup = () => {
-  const { appliedTool: currentTool, image, setImage } = useEditingStore();
+  const { appliedTool: currentTool } = useEditingStore();
   const { brushSize, setBrushSize } = useInPaintStore();
   const { handleSendMessage, status } = useApplyEffect();
 
   const handleRemove = () => {
-    if (!image || !currentTool) return;
+    if (!currentTool) return;
     handleSendMessage(currentTool.prompt);
   };
 
@@ -44,7 +42,9 @@ const MagicEraserPopup = () => {
         disabled={status === "streaming" || status === "submitted"}
       >
         <EraserIcon className="size-4" />
-        {status === "streaming" || status === "submitted" ? "Removing..." : "Remove"}
+        {status === "streaming" || status === "submitted"
+          ? "Removing..."
+          : "Remove"}
       </button>
     </div>
   );

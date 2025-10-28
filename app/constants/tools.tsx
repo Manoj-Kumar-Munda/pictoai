@@ -3,6 +3,8 @@ import { nanoid } from "nanoid";
 import { TOOLS_PROMPTS } from "./prompts";
 import { EraserIcon } from "lucide-react";
 
+export const MIN_BRUSH_SIZE = 30;
+export const MAX_BRUSH_SIZE = 100;
 export const tools: ToolProps[] = [
   {
     id: nanoid(),
