@@ -11,5 +11,5 @@ export const EFFECTS_LIGHTING_PROMPTS = {
 
 export const TOOLS_PROMPTS = {
   magic_eraser:
-    "Analyze the image and identify the primary object that is painted red. Select this red object and seamlessly remove it. Using your 'Peel-and-Reveal' inpainting capability, intelligently reconstruct the background and any occluded elements with photorealistic accuracy, ensuring the final image matches the original lighting, texture, and context.",
+    "Remove the painted object from the image keep the rest image as it is.",
 };
