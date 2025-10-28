@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Stage, Layer, Image, StageProps, Group, Line } from "react-konva";
 import useImage from "use-image";
 import DownloadButton from "./download-button";
@@ -10,89 +10,42 @@ import MagicEraserPopup from "@/tools/magic-eraser";
 import Konva from "konva";
 import useInPaintStore from "@/store/inpaint-store";
 
-interface ImageEditorCanvasProps {
-  imageUrl: string;
-  width: number;
-  height: number;
-}
-
 const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
   const [image] = useImage(src, "anonymous");
   if (image) return <Image image={image} {...rest} />;
   return null;
 };
 
-const ImageEditorCanvas = ({
-  imageUrl,
-  width,
-  height,
-}: ImageEditorCanvasProps) => {
-  const [imgUrl, setImgUrl] = useState<string>("");
+const ImageEditorCanvas = () => {
   const [zoom, setZoom] = useState<number>(0.2);
   const [stageWidth, setStageWidth] = useState<number>(800);
   const [stageHeight, setStageHeight] = useState<number>(600);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { appliedTool: currentTool, setImage } = useEditingStore();
+  const { appliedTool: currentTool, image, setImage } = useEditingStore();
   const { lines, setLines, clearLines, brushSize } = useInPaintStore();
   const isDrawing = useRef(false);
   const stageRef = useRef<Konva.Stage>(null);
-  const handleZoomIn = () => {
-    setZoom((prevZoom) => prevZoom + 0.1);
-  };
 
-  const handleZoomOut = () => {
-    setZoom((prevZoom) => Math.max(prevZoom - 0.1, 0.1));
-  };
+  // Helper: Get local coordinates from screen coordinates
+  const getLocalPoint = useCallback(
+    (stage: Konva.Stage, screenPoint: { x: number; y: number }) => {
+      const imageGroup = stage.findOne("#imageGroup");
+      if (!imageGroup) return null;
+      const transform = imageGroup.getAbsoluteTransform().copy().invert();
+      return transform.point(screenPoint);
+    },
+    []
+  );
 
-  const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    if (currentTool?.tool_id !== "eraser") return;
-    isDrawing.current = true;
-    const stage = e.target.getStage();
-    if (!stage) return;
-    const point = stage.getPointerPosition();
-    if (!point) return;
-
-    // Convert screen coordinates to image local coordinates
-    const imageGroup = stage.findOne("#imageGroup");
-    if (!imageGroup) return;
-    const transform = imageGroup.getAbsoluteTransform().copy().invert();
-    const localPoint = transform.point(point);
-
-    setLines([...lines, { points: [localPoint.x, localPoint.y] }]);
-  };
-
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-    if (!isDrawing.current || currentTool?.tool_id !== "eraser") return;
-    const stage = e.target.getStage();
-    if (!stage) return;
-    const point = stage.getPointerPosition();
-    if (!point) return;
-
-    // Convert screen coordinates to image local coordinates
-    const imageGroup = stage.findOne("#imageGroup");
-    if (!imageGroup) return;
-    const transform = imageGroup.getAbsoluteTransform().copy().invert();
-    const localPoint = transform.point(point);
-
+  // Helper: Merge image with painted lines
+  const mergeImageWithLines = useCallback(() => {
     if (lines.length === 0) return;
-    const newLines = [...lines];
-    const lastIndex = newLines.length - 1;
-    newLines[lastIndex] = {
-      ...newLines[lastIndex],
-      points: [...newLines[lastIndex].points, localPoint.x, localPoint.y],
-    };
-    setLines(newLines);
-  };
 
-  const handleMouseUp = () => {
-    isDrawing.current = false;
-
-    // Create a temporary stage to merge the image with the painted lines
     const tempStage = new Konva.Stage({
       container: document.createElement("div"),
-      width: width,
-      height: height,
+      width: image.width,
+      height: image.height,
     });
 
     const tempLayer = new Konva.Layer();
@@ -100,11 +53,12 @@ const ImageEditorCanvas = ({
 
     const tempImage = new window.Image();
     tempImage.crossOrigin = "anonymous";
+
     tempImage.onload = () => {
       const konvaImage = new Konva.Image({
         image: tempImage,
-        width: width,
-        height: height,
+        width: image.width,
+        height: image.height,
       });
       tempLayer.add(konvaImage);
 
@@ -124,19 +78,76 @@ const ImageEditorCanvas = ({
       });
 
       tempLayer.batchDraw();
+
       const uri = tempStage.toDataURL({
         mimeType: "image/png",
         quality: 1,
       });
 
-      setImage(uri, width, height);
+      setImage(uri, image.width, image.height);
       clearLines();
-
-      // Cleanup
       tempStage.destroy();
     };
-    tempImage.src = imgUrl;
+
+    tempImage.onerror = () => {
+      console.error("Failed to load image for merging");
+      tempStage.destroy();
+    };
+
+    tempImage.src = image.url;
+  }, [lines, brushSize, image.width, image.height, image.url, setImage, clearLines]);
+  const handleZoomIn = () => {
+    setZoom((prevZoom) => prevZoom + 0.1);
   };
+
+  const handleZoomOut = () => {
+    setZoom((prevZoom) => Math.max(prevZoom - 0.1, 0.1));
+  };
+
+  const handleMouseDown = useCallback(
+    (e: KonvaEventObject<MouseEvent>) => {
+      if (currentTool?.tool_id !== "eraser") return;
+      isDrawing.current = true;
+      const stage = e.target.getStage();
+      if (!stage) return;
+      const point = stage.getPointerPosition();
+      if (!point) return;
+
+      const localPoint = getLocalPoint(stage, point);
+      if (!localPoint) return;
+
+      setLines([...lines, { points: [localPoint.x, localPoint.y] }]);
+    },
+    [currentTool, lines, setLines, getLocalPoint]
+  );
+
+  const handleMouseMove = useCallback(
+    (e: KonvaEventObject<MouseEvent>) => {
+      if (!isDrawing.current || currentTool?.tool_id !== "eraser") return;
+      const stage = e.target.getStage();
+      if (!stage) return;
+      const point = stage.getPointerPosition();
+      if (!point) return;
+
+      const localPoint = getLocalPoint(stage, point);
+      if (!localPoint || lines.length === 0) return;
+
+      const newLines = [...lines];
+      const lastIndex = newLines.length - 1;
+      newLines[lastIndex] = {
+        ...newLines[lastIndex],
+        points: [...newLines[lastIndex].points, localPoint.x, localPoint.y],
+      };
+      setLines(newLines);
+    },
+    [currentTool, lines, setLines, getLocalPoint]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    if (!isDrawing.current) return;
+    isDrawing.current = false;
+    mergeImageWithLines();
+  }, [mergeImageWithLines]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -144,10 +155,6 @@ const ImageEditorCanvas = ({
       setStageHeight(containerRef.current.offsetHeight);
     }
   }, []);
-
-  useEffect(() => {
-    setImgUrl(imageUrl);
-  }, [imageUrl]);
 
   return (
     <div className="w-full h-full">
@@ -168,13 +175,13 @@ const ImageEditorCanvas = ({
               id="imageGroup"
               scaleX={zoom}
               scaleY={zoom}
-              x={(stageWidth - width * zoom) / 2}
-              y={(stageHeight - height * zoom) / 2}
+              x={(stageWidth - image.width * zoom) / 2}
+              y={(stageHeight - image.height * zoom) / 2}
             >
               <URLImage
-                src={imgUrl}
-                width={width}
-                height={height}
+                src={image.url}
+                width={image.width}
+                height={image.height}
                 draggable={!isDrawing.current}
               />
               {lines.map((line, i) => (
@@ -199,7 +206,7 @@ const ImageEditorCanvas = ({
 
         {/* download button */}
         <div className="absolute  right-4 top-4 z-50 border">
-          <DownloadButton url={imgUrl} />
+          <DownloadButton url={image.url} />
         </div>
 
         {/* zoom buttons + and - */}
