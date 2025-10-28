@@ -15,7 +15,7 @@ const MagicEraserPopup = () => {
   };
 
   return (
-    <div className="absolute top-4 left-4 bg-white shadow p-4 z-10 rounded-md max-w-72 ">
+    <div className="absolute top-4 left-4 bg-gray-100 shadow p-4 z-10 rounded-md max-w-72 ">
       <h3 className="text-primary font-semibold text-sm">Magic Eraser</h3>
       <p className="text-[10px] text-neutral-500 font-medium">
         {currentTool?.description}

@@ -209,9 +209,6 @@ const ImageEditorCanvas = () => {
           </Layer>
         </Stage>
 
-        {/* about the current tool and brush size slider */}
-        {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
-
         {/* download button */}
         <div className="absolute  right-4 top-4 z-50 border">
           <DownloadButton url={image.url} />
