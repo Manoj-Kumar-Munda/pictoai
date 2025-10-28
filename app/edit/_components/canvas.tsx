@@ -95,7 +95,15 @@ const ImageEditorCanvas = () => {
     };
 
     tempImage.src = image.url;
-  }, [lines, brushSize, image.width, image.height, image.url, setImage, clearLines]);
+  }, [
+    lines,
+    brushSize,
+    image.width,
+    image.height,
+    image.url,
+    setImage,
+    clearLines,
+  ]);
   const handleZoomIn = () => {
     setZoom((prevZoom) => prevZoom + 0.1);
   };
@@ -210,21 +218,23 @@ const ImageEditorCanvas = () => {
         </div>
 
         {/* zoom buttons + and - */}
-        <div className="absolute bottom-4 right-4 bg-foreground rounded-2xl flex gap-2 z-10 items-center">
+        <div className="absolute bottom-4 right-4 bg-accent rounded-2xl flex gap-2 z-10 items-center">
           <Button
             variant="default"
             size="icon"
-            className="cursor-pointer"
+            className="cursor-pointer bg-accent text-neutral-500 font-bold"
             onClick={handleZoomIn}
           >
             +
           </Button>
-          <span className="text-sm text-white">Zoom: {zoom.toFixed(1)}</span>
+          <span className="text-xs font-bold text-neutral-500 ">
+            {zoom.toFixed(1)}
+          </span>
           <Button
             variant="default"
             size="icon"
             onClick={handleZoomOut}
-            className="cursor-pointer"
+            className="cursor-pointer bg-accent text-neutral-500 font-bold"
           >
             -
           </Button>
