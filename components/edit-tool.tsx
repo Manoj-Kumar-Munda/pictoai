@@ -25,10 +25,6 @@ const EditTool = (tool: ToolProps) => {
     >
       {Icon ? <Icon strokeWidth={3} className="size-4" /> : null}
       <span className="font-semibold text-[10px]">{name}</span>
-
-      {
-        activeTool?.tool_id === "eraser" && <MagicEraserPopup />
-      }
     </div>
   );
 };

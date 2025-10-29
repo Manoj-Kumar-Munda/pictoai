@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Stage, Layer, Image, StageProps, Group, Line } from "react-konva";
 import useImage from "use-image";
@@ -6,9 +5,10 @@ import DownloadButton from "./download-button";
 import useEditingStore from "@/store/editing-store";
 import React from "react";
 import { KonvaEventObject } from "konva/lib/Node";
-import MagicEraserPopup from "@/tools/magic-eraser";
 import Konva from "konva";
 import useInPaintStore from "@/store/inpaint-store";
+import ZoomButton from "./zoom-button";
+import MagicEraserPopup from "@/tools/magic-eraser";
 
 const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
   const [image] = useImage(src, "anonymous");
@@ -17,12 +17,11 @@ const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
 };
 
 const ImageEditorCanvas = () => {
-  const [zoom, setZoom] = useState<number>(0.2);
   const [stageWidth, setStageWidth] = useState<number>(800);
   const [stageHeight, setStageHeight] = useState<number>(600);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { appliedTool: currentTool, image, setImage } = useEditingStore();
+  const { appliedTool: currentTool, image, setImage, zoom } = useEditingStore();
   const { lines, setLines, clearLines, brushSize } = useInPaintStore();
   const isDrawing = useRef(false);
   const stageRef = useRef<Konva.Stage>(null);
@@ -104,13 +103,6 @@ const ImageEditorCanvas = () => {
     setImage,
     clearLines,
   ]);
-  const handleZoomIn = () => {
-    setZoom((prevZoom) => prevZoom + 0.1);
-  };
-
-  const handleZoomOut = () => {
-    setZoom((prevZoom) => Math.max(prevZoom - 0.1, 0.1));
-  };
 
   const handleMouseDown = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
@@ -209,33 +201,15 @@ const ImageEditorCanvas = () => {
           </Layer>
         </Stage>
 
+        {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
+
         {/* download button */}
         <div className="absolute  right-4 top-4 z-50 border">
           <DownloadButton url={image.url} />
         </div>
 
         {/* zoom buttons + and - */}
-        <div className="absolute bottom-4 right-4 bg-accent rounded-2xl flex gap-2 z-10 items-center">
-          <Button
-            variant="default"
-            size="icon"
-            className="cursor-pointer bg-accent text-neutral-500 font-bold"
-            onClick={handleZoomIn}
-          >
-            +
-          </Button>
-          <span className="text-xs font-bold text-neutral-500 ">
-            {zoom.toFixed(1)}
-          </span>
-          <Button
-            variant="default"
-            size="icon"
-            onClick={handleZoomOut}
-            className="cursor-pointer bg-accent text-neutral-500 font-bold"
-          >
-            -
-          </Button>
-        </div>
+        <ZoomButton />
       </div>
     </div>
   );
