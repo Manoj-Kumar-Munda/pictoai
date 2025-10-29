@@ -6,6 +6,7 @@ interface EditingStore {
   appliedEffect: EffectProps | null;
   appliedTool: ToolProps | null;
   result: string;
+  zoom: number;
   undo: () => void;
   redo: () => void;
   clear: () => void;
@@ -13,6 +14,9 @@ interface EditingStore {
   setAppliedEffect: (effect: EffectProps) => void;
   setAppliedTool: (tool: ToolProps) => void;
   setResult: (result: string) => void;
+  setZoom: (zoom: number) => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
 }
 
 const useEditingStore = create<EditingStore>((set) => ({
@@ -24,6 +28,7 @@ const useEditingStore = create<EditingStore>((set) => ({
   appliedEffect: null,
   appliedTool: null,
   result: "",
+  zoom: 0.2,
   undo: () => {},
   redo: () => {},
   clear: () => {},
@@ -33,6 +38,9 @@ const useEditingStore = create<EditingStore>((set) => ({
   setAppliedEffect: (effect) => set({ appliedEffect: effect }),
   setAppliedTool: (tool) => set({ appliedTool: tool }),
   setResult: (result) => set({ result }),
+  setZoom: (zoom) => set({ zoom }),
+  zoomIn: () => set((state) => ({ zoom: state.zoom + 0.1 })),
+  zoomOut: () => set((state) => ({ zoom: Math.max(state.zoom - 0.1, 0.1) })),
 }));
 
 export default useEditingStore;
