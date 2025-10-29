@@ -1,5 +1,5 @@
 import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from "@/app/constants/tools";
-import useApplyEffect from "@/hooks/useApplyEffect";
+import useApplyEffect from "@/hooks/useSendChat";
 import useEditingStore from "@/store/editing-store";
 import useInPaintStore from "@/store/inpaint-store";
 import { EraserIcon } from "lucide-react";

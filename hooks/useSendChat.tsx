@@ -4,7 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect } from "react";
 
-const useApplyEffect = () => {
+const useSendChat = () => {
   const { image, setImage } = useEditingStore();
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
@@ -37,4 +37,4 @@ const useApplyEffect = () => {
   return { status, handleSendMessage };
 };
 
-export default useApplyEffect;
+export default useSendChat;
