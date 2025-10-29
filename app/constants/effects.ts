@@ -1,10 +1,6 @@
 import { type EffectProps } from "@/types";
 import { nanoid } from "nanoid";
 import { EFFECTS_LIGHTING_PROMPTS } from "./prompts";
-import effect1 from "@/app/assets/ai_effects/lightings/black-white-studio.png";
-import effect2 from "@/app/assets/ai_effects/lightings/low-key.png";
-import effect3 from "@/app/assets/ai_effects/lightings/neon-noir.png";
-import effect4 from "@/app/assets/ai_effects/lightings/golden.png";
 
 const effects: EffectProps[] = [
   {

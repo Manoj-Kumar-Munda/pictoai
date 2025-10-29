@@ -5,6 +5,7 @@ import Heading from "@/components/heading";
 
 import EditTool from "@/components/edit-tool";
 import { tools } from "@/app/constants/tools";
+import sceneSwaps from "@/app/constants/scene-swaps";
 
 const EditSidebar = () => {
   return (
@@ -22,6 +23,17 @@ const EditSidebar = () => {
           <div className="grid grid-cols-3 gap-y-4 gap-x-3.5">
             {effects.map((effect) => (
               <AIEffectCard key={effect.name} {...effect} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-1">
+        <Heading>Scene Swaps</Heading>
+        <div className="h-full overflow-y-auto">
+          <div className="grid grid-cols-3 gap-y-4 gap-x-3.5">
+            {sceneSwaps.map((swap) => (
+              <AIEffectCard key={swap.name} {...swap} />
             ))}
           </div>
         </div>
