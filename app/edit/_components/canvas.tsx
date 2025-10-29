@@ -104,13 +104,6 @@ const ImageEditorCanvas = () => {
     clearLines,
   ]);
 
-  useEffect(() => {
-    if (containerRef.current) {
-      setStageWidth(containerRef.current.offsetWidth);
-      setStageHeight(containerRef.current.offsetHeight);
-    }
-  }, []);
-
   const handleMouseDown = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
       if (currentTool?.tool_id !== "eraser") return;
