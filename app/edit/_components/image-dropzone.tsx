@@ -1,6 +1,9 @@
+import { DEMO_IMAGES } from "@/constants";
 import { cn } from "@/lib/utils";
+import useEditingStore from "@/store/editing-store";
 import { UploadError } from "@/types";
 import { Image } from "@imagekit/next";
+import type { DropzoneInputProps, DropzoneRootProps } from "react-dropzone";
 
 const ImageUploadZone = ({
   getRootProps,
@@ -9,14 +12,12 @@ const ImageUploadZone = ({
   isLoading,
   error,
 }: {
-  getRootProps: () => any;
-  getInputProps: () => any;
+  getRootProps: () => DropzoneRootProps;
+  getInputProps: () => DropzoneInputProps;
   isDragActive: boolean;
   isLoading: boolean;
   error: UploadError | null;
 }) => {
-
-    
   return (
     <div className="w-full h-full bg-white p-4 rounded-lg">
       <div
@@ -42,7 +43,9 @@ const ImageUploadZone = ({
             </div>
           ) : (
             <>
-             
+              <p className="mb-2 text-xs font-bold text-neutral-500">
+                Drop or click to upload an image (max. 10MB)
+              </p>
               <button
                 type="button"
                 className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors font-medium text-sm "
@@ -50,32 +53,15 @@ const ImageUploadZone = ({
                 Choose Image
               </button>
 
-              <p className="text-[10px] font-semibold text-gray-400 mt-1">
-                Supports: JPG, PNG, GIF, BMP, WebP (max 10MB)
-              </p>
-
               <div className="mt-4 space-y-2 mx-auto">
                 <p className="text-gray-400 text-xs font-semibold">
                   Choose a picture to start with
                 </p>
                 {/* on clicking it, it will be stored in the editing store */}
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className="flex items-center justify-center gap-2"
-                  onClick={(e) => {
-                    alert("hello");
-                    e.stopPropagation();
-                  }}
-                >
-                  <Image
-                    urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL!}
-                    src="/PictoAI/Demo/home.jpg"
-                    alt="Home"
-                    width={72}
-                    height={72}
-                  />
-                </div>
+
+                {DEMO_IMAGES.map((img) => (
+                  <DemoImage key={img.src} img={img} />
+                ))}
               </div>
             </>
           )}
@@ -87,6 +73,56 @@ const ImageUploadZone = ({
           )}
         </div>
       </div>
+    </div>
+  );
+};
+
+const DemoImage = ({ img }: { img: (typeof DEMO_IMAGES)[number] }) => {
+  const { setImage } = useEditingStore();
+
+  const setDemoImage = async (
+    e: React.MouseEvent<HTMLDivElement>,
+    url: string
+  ) => {
+    e.stopPropagation();
+
+    const imageUrl = `${process.env
+      .NEXT_PUBLIC_IMAGEKIT_URL!}/tr:orig-true${url}`;
+
+    // Preload to get natural width/height so canvas scales correctly
+    try {
+      const imgEl = new window.Image();
+      imgEl.crossOrigin = "anonymous";
+      const dims = await new Promise<{ w: number; h: number }>(
+        (resolve, reject) => {
+          imgEl.onload = () =>
+            resolve({ w: imgEl.naturalWidth, h: imgEl.naturalHeight });
+          imgEl.onerror = () => reject(new Error("Failed to load demo image"));
+          imgEl.src = imageUrl;
+        }
+      );
+
+      setImage(imageUrl, dims.w, dims.h);
+    } catch {
+      setImage(imageUrl);
+    }
+  };
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      className="flex items-center justify-center gap-2"
+      onClick={(e: React.MouseEvent<HTMLDivElement>) =>
+        setDemoImage(e, img.src)
+      }
+    >
+      <Image
+        urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL!}
+        src={img.src}
+        alt={img.alt}
+        width={72}
+        height={72}
+      />
     </div>
   );
 };

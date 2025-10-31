@@ -9,3 +9,5 @@ export const ERROR_MESSAGES = {
   INVALID_TYPE: "Invalid file type. Please upload an image file.",
   LOAD_ERROR: "Failed to load image. Please try another file.",
 } as const;
+
+export const DEMO_IMAGES = [{ src: "/PictoAI/Demo/home.jpg", alt: "Home" }];
