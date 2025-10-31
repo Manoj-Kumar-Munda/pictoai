@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES, MAX_FILE_SIZE } from "@/app/constants";
+import { ERROR_MESSAGES, MAX_FILE_SIZE } from "@/constants";
 import useEditingStore from "@/store/editing-store";
 import { UploadError } from "@/types";
 import { useCallback, useState } from "react";

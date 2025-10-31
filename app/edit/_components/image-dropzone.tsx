@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { UploadError } from "@/types";
-import { Image as ImageIcon } from "lucide-react";
+import { Image } from "@imagekit/next";
 
 const ImageUploadZone = ({
   getRootProps,
@@ -15,6 +15,8 @@ const ImageUploadZone = ({
   isLoading: boolean;
   error: UploadError | null;
 }) => {
+
+    
   return (
     <div className="w-full h-full bg-white p-4 rounded-lg">
       <div
@@ -40,17 +42,7 @@ const ImageUploadZone = ({
             </div>
           ) : (
             <>
-              <ImageIcon
-                className="size-12 text-gray-500 mx-auto"
-                strokeWidth={1}
-              />
-
-              <p className="text-gray-600 mb-4 text-sm md:text-base">
-                {isDragActive
-                  ? "Drop the image here..."
-                  : "Drop an image here or click to upload"}
-              </p>
-
+             
               <button
                 type="button"
                 className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors font-medium text-sm "
@@ -58,9 +50,33 @@ const ImageUploadZone = ({
                 Choose Image
               </button>
 
-              <p className="text-xs text-gray-500 mt-4">
+              <p className="text-[10px] font-semibold text-gray-400 mt-1">
                 Supports: JPG, PNG, GIF, BMP, WebP (max 10MB)
               </p>
+
+              <div className="mt-4 space-y-2 mx-auto">
+                <p className="text-gray-400 text-xs font-semibold">
+                  Choose a picture to start with
+                </p>
+                {/* on clicking it, it will be stored in the editing store */}
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className="flex items-center justify-center gap-2"
+                  onClick={(e) => {
+                    alert("hello");
+                    e.stopPropagation();
+                  }}
+                >
+                  <Image
+                    urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL!}
+                    src="/PictoAI/Demo/home.jpg"
+                    alt="Home"
+                    width={72}
+                    height={72}
+                  />
+                </div>
+              </div>
             </>
           )}
 

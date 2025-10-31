@@ -5,7 +5,7 @@ import ImageEditorCanvas from "./canvas";
 import useEditingStore from "@/store/editing-store";
 import ImageUploadZone from "./image-dropzone";
 import useImageUpload from "@/hooks/useUploadImage";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/app/constants";
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/constants";
 
 const EditorCanvas = () => {
   const { image } = useEditingStore();

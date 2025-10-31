@@ -1,4 +1,4 @@
-import { MIN_BRUSH_SIZE } from "@/app/constants/tools";
+import { MIN_BRUSH_SIZE } from "@/constants/tools";
 import { create } from "zustand";
 
 interface InPaintStore {
