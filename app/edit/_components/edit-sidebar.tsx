@@ -1,11 +1,11 @@
 "use client";
 import AIEffectCard from "@/components/effect-card";
-import { effects } from "@/app/constants/effects";
+import { effects } from "@/constants/effects";
 import Heading from "@/components/heading";
 
 import EditTool from "@/components/edit-tool";
-import { tools } from "@/app/constants/tools";
-import sceneSwaps from "@/app/constants/scene-swaps";
+import { tools } from "@/constants/tools";
+import sceneSwaps from "@/constants/scene-swaps";
 
 const EditSidebar = () => {
   return (
