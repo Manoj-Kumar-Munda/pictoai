@@ -19,14 +19,21 @@ const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
 const ImageEditorCanvas = () => {
   const [stageWidth, setStageWidth] = useState<number>(800);
   const [stageHeight, setStageHeight] = useState<number>(600);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  const { appliedTool: currentTool, image, setImage, zoom } = useEditingStore();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const previousImageUrl = useRef<string>("");
+
+  const {
+    appliedTool: currentTool,
+    image,
+    setImage,
+    zoom,
+    setZoom,
+  } = useEditingStore();
   const { lines, setLines, clearLines, brushSize } = useInPaintStore();
   const isDrawing = useRef(false);
   const stageRef = useRef<Konva.Stage>(null);
 
-  // Helper: Get local coordinates from screen coordinates
   const getLocalPoint = useCallback(
     (stage: Konva.Stage, screenPoint: { x: number; y: number }) => {
       const imageGroup = stage.findOne("#imageGroup");
@@ -37,7 +44,6 @@ const ImageEditorCanvas = () => {
     []
   );
 
-  // Helper: Merge image with painted lines
   const mergeImageWithLines = useCallback(() => {
     if (lines.length === 0) return;
 
@@ -61,7 +67,6 @@ const ImageEditorCanvas = () => {
       });
       tempLayer.add(konvaImage);
 
-      // Add all the painted lines
       lines.forEach((line) => {
         const konvaLine = new Konva.Line({
           points: line.points,
@@ -150,65 +155,100 @@ const ImageEditorCanvas = () => {
   }, [mergeImageWithLines]);
 
   useEffect(() => {
-    if (containerRef.current) {
-      setStageWidth(containerRef.current.offsetWidth);
-      setStageHeight(containerRef.current.offsetHeight);
+    if (containerRef.current && image.url && image.width && image.height) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const containerHeight = containerRef.current.offsetHeight;
+
+      // Set stage dimensions to match image
+      setStageWidth(image.width);
+      setStageHeight(image.height);
+
+      // Only calculate initial zoom if this is a new image
+      if (previousImageUrl.current !== image.url) {
+        // Calculate zoom to fit image within container with some padding
+        const padding = 80; // padding in pixels
+        const scaleX = (containerWidth - padding) / image.width;
+        const scaleY = (containerHeight - padding) / image.height;
+        const initialZoom = Math.min(scaleX, scaleY, 1); // Don't zoom in beyond 100% initially
+
+        setZoom(initialZoom);
+        previousImageUrl.current = image.url;
+      }
     }
-  }, []);
+  }, [image, setZoom]);
+
+  // Calculate the actual display dimensions based on zoom
+  const displayWidth = stageWidth * zoom;
+  const displayHeight = stageHeight * zoom;
 
   return (
-    <div className="w-full h-full">
-      <div ref={containerRef} className="w-full h-full relative">
-        <Stage
-          width={stageWidth}
-          height={stageHeight}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          // onTouchStart={handleMouseDown}
-          // onTouchMove={handleMouseMove}
-          onTouchEnd={handleMouseUp}
-          ref={stageRef}
+    <div className="w-full h-full flex flex-col relative">
+      <div className="w-full border-b bg-background px-4 py-3 flex items-center justify-between">
+        <div className="text-sm font-medium">Image Editor</div>
+        <DownloadButton url={image.url} />
+      </div>
+
+      <div
+        ref={containerRef}
+        className="flex-1 min-h-0"
+        style={{
+          overflow: "auto",
+          position: "relative",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minWidth: `${displayWidth}px`,
+            minHeight: `${displayHeight}px`,
+          }}
         >
-          <Layer>
-            <Group
-              id="imageGroup"
-              scaleX={zoom}
-              scaleY={zoom}
-              x={(stageWidth - image.width * zoom) / 2}
-              y={(stageHeight - image.height * zoom) / 2}
-            >
-              <URLImage
-                src={image.url}
-                width={image.width}
-                height={image.height}
-                draggable={!isDrawing.current}
-              />
-              {lines.map((line, i) => (
-                <Line
-                  key={i}
-                  points={line.points}
-                  stroke={"#df4b26"}
-                  strokeWidth={brushSize}
-                  tension={0.5}
-                  lineCap="round"
-                  lineJoin="round"
-                  globalCompositeOperation={"source-over"}
-                  opacity={0.5}
+          <Stage
+            width={displayWidth}
+            height={displayHeight}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onTouchEnd={handleMouseUp}
+            ref={stageRef}
+          >
+            <Layer>
+              <Group id="imageGroup" scaleX={zoom} scaleY={zoom}>
+                <URLImage
+                  src={image.url}
+                  width={image.width}
+                  height={image.height}
+                  draggable={false}
                 />
-              ))}
-            </Group>
-          </Layer>
-        </Stage>
-
-        {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
-
-        {/* download button */}
-        <div className="absolute  right-4 top-4 z-50 border">
-          <DownloadButton url={image.url} />
+                {lines.map((line, i) => (
+                  <Line
+                    key={i}
+                    points={line.points}
+                    stroke={"#df4b26"}
+                    strokeWidth={brushSize}
+                    tension={0.5}
+                    lineCap="round"
+                    lineJoin="round"
+                    globalCompositeOperation={"source-over"}
+                    opacity={0.5}
+                  />
+                ))}
+              </Group>
+            </Layer>
+          </Stage>
         </div>
 
-        {/* zoom buttons + and - */}
+        {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
+      </div>
+
+      <div className="w-full py-3 border-t bg-background flex items-center justify-end pr-4 ">
         <ZoomButton />
       </div>
     </div>
