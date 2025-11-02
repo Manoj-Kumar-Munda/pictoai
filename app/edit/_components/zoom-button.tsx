@@ -5,7 +5,7 @@ const ZoomButton = () => {
   const { zoom, zoomIn, zoomOut } = useEditingStore();
 
   return (
-    <div className="absolute bottom-4 right-4 bg-accent rounded-2xl flex gap-2 z-10 items-center">
+    <div className="bg-accent rounded-2xl flex gap-2 z-10 items-center">
       <Button
         variant="default"
         size="icon"
