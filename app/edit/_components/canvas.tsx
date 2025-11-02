@@ -164,9 +164,6 @@ const ImageEditorCanvas = () => {
     const containerWidth = containerRef.current.offsetWidth;
     const containerHeight = containerRef.current.offsetHeight;
 
-    // Update stage dimensions
-    setStageDimensions({ width: image.width, height: image.height });
-
     // Calculate and set initial zoom only once per image
     if (!hasInitializedZoom) {
       const scaleX = (containerWidth - PADDING) / image.width;
@@ -181,6 +178,10 @@ const ImageEditorCanvas = () => {
   // Reset zoom initialization flag when image changes
   useEffect(() => {
     setHasInitializedZoom(false);
+    // Update stage dimensions
+    if (image) {
+      setStageDimensions({ width: image.width, height: image.height });
+    }
   }, [image.url]);
 
   // Calculate display dimensions
