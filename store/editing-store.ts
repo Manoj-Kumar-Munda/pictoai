@@ -28,7 +28,7 @@ const useEditingStore = create<EditingStore>((set) => ({
   appliedEffect: null,
   appliedTool: null,
   result: "",
-  zoom: 0.2,
+  zoom: 1,
   undo: () => {},
   redo: () => {},
   clear: () => {},
