@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Stage, Layer, Image, StageProps, Group, Line } from "react-konva";
 import useImage from "use-image";
-import DownloadButton from "./download-button";
-import useEditingStore from "@/store/editing-store";
-import React from "react";
 import { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
+import useEditingStore from "@/store/editing-store";
 import useInPaintStore from "@/store/inpaint-store";
+import DownloadButton from "./download-button";
 import ZoomButton from "./zoom-button";
 import MagicEraserPopup from "@/tools/magic-eraser";
 
@@ -16,17 +15,37 @@ const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
   return null;
 };
 
-const ImageEditorCanvas = () => {
-  const [stageWidth, setStageWidth] = useState<number>(800);
-  const [stageHeight, setStageHeight] = useState<number>(600);
-  const containerRef = useRef<HTMLDivElement>(null);
+const PADDING = 80; // Padding for initial zoom calculation
+const LINE_CONFIG = {
+  stroke: "#df4b26",
+  tension: 0.5,
+  lineCap: "round" as const,
+  lineJoin: "round" as const,
+  globalCompositeOperation: "source-over" as const,
+  opacity: 0.5,
+};
 
-  const { appliedTool: currentTool, image, setImage, zoom } = useEditingStore();
-  const { lines, setLines, clearLines, brushSize } = useInPaintStore();
+const ImageEditorCanvas = () => {
+  const [stageDimensions, setStageDimensions] = useState({
+    width: 800,
+    height: 600,
+  });
+  const [hasInitializedZoom, setHasInitializedZoom] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
   const isDrawing = useRef(false);
   const stageRef = useRef<Konva.Stage>(null);
 
-  // Helper: Get local coordinates from screen coordinates
+  const {
+    appliedTool: currentTool,
+    image,
+    setImage,
+    zoom,
+    setZoom,
+  } = useEditingStore();
+  const { lines, setLines, clearLines, brushSize } = useInPaintStore();
+
+  // Helper to get local coordinates from screen coordinates
   const getLocalPoint = useCallback(
     (stage: Konva.Stage, screenPoint: { x: number; y: number }) => {
       const imageGroup = stage.findOne("#imageGroup");
@@ -37,7 +56,7 @@ const ImageEditorCanvas = () => {
     []
   );
 
-  // Helper: Merge image with painted lines
+  // Merge painted lines with the image
   const mergeImageWithLines = useCallback(() => {
     if (lines.length === 0) return;
 
@@ -61,28 +80,18 @@ const ImageEditorCanvas = () => {
       });
       tempLayer.add(konvaImage);
 
-      // Add all the painted lines
       lines.forEach((line) => {
         const konvaLine = new Konva.Line({
           points: line.points,
-          stroke: "#df4b26",
+          ...LINE_CONFIG,
           strokeWidth: brushSize,
-          tension: 0.5,
-          lineCap: "round",
-          lineJoin: "round",
-          globalCompositeOperation: "source-over",
-          opacity: 0.5,
         });
         tempLayer.add(konvaLine);
       });
 
       tempLayer.batchDraw();
 
-      const uri = tempStage.toDataURL({
-        mimeType: "image/png",
-        quality: 1,
-      });
-
+      const uri = tempStage.toDataURL({ mimeType: "image/png", quality: 1 });
       setImage(uri, image.width, image.height);
       clearLines();
       tempStage.destroy();
@@ -94,22 +103,17 @@ const ImageEditorCanvas = () => {
     };
 
     tempImage.src = image.url;
-  }, [
-    lines,
-    brushSize,
-    image.width,
-    image.height,
-    image.url,
-    setImage,
-    clearLines,
-  ]);
+  }, [lines, brushSize, image, setImage, clearLines]);
 
+  // Mouse event handlers for drawing
   const handleMouseDown = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
       if (currentTool?.tool_id !== "eraser") return;
+
       isDrawing.current = true;
       const stage = e.target.getStage();
       if (!stage) return;
+
       const point = stage.getPointerPosition();
       if (!point) return;
 
@@ -124,8 +128,10 @@ const ImageEditorCanvas = () => {
   const handleMouseMove = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
       if (!isDrawing.current || currentTool?.tool_id !== "eraser") return;
+
       const stage = e.target.getStage();
       if (!stage) return;
+
       const point = stage.getPointerPosition();
       if (!point) return;
 
@@ -149,66 +155,88 @@ const ImageEditorCanvas = () => {
     mergeImageWithLines();
   }, [mergeImageWithLines]);
 
+  // Initialize stage dimensions and zoom when image loads or changes
   useEffect(() => {
-    if (containerRef.current) {
-      setStageWidth(containerRef.current.offsetWidth);
-      setStageHeight(containerRef.current.offsetHeight);
+    if (!containerRef.current || !image.url || !image.width || !image.height) {
+      return;
     }
-  }, []);
+
+    const containerWidth = containerRef.current.offsetWidth;
+    const containerHeight = containerRef.current.offsetHeight;
+
+    // Calculate and set initial zoom only once per image
+    if (!hasInitializedZoom) {
+      const scaleX = (containerWidth - PADDING) / image.width;
+      const scaleY = (containerHeight - PADDING) / image.height;
+      const initialZoom = Math.min(scaleX, scaleY, 1);
+
+      setZoom(initialZoom);
+      setHasInitializedZoom(true);
+    }
+  }, [image.url, image.width, image.height, setZoom, hasInitializedZoom]);
+
+  // Reset zoom initialization flag when image changes
+  useEffect(() => {
+    setHasInitializedZoom(false);
+    // Update stage dimensions
+    if (image) {
+      setStageDimensions({ width: image.width, height: image.height });
+    }
+  }, [image.url]);
+
+  // Calculate display dimensions
+  const displayWidth = stageDimensions.width * zoom;
+  const displayHeight = stageDimensions.height * zoom;
 
   return (
-    <div className="w-full h-full">
-      <div ref={containerRef} className="w-full h-full relative">
-        <Stage
-          width={stageWidth}
-          height={stageHeight}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          // onTouchStart={handleMouseDown}
-          // onTouchMove={handleMouseMove}
-          onTouchEnd={handleMouseUp}
-          ref={stageRef}
+    <div className="w-full h-full flex flex-col relative">
+      <div className="w-full border-b bg-background px-4 py-3 flex items-center justify-end flex-shrink-0">
+        <DownloadButton url={image.url} />
+      </div>
+
+      {/* Canvas Area */}
+      <div ref={containerRef} className="flex-1 min-h-0 overflow-auto relative">
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            minWidth: `${displayWidth}px`,
+            minHeight: `${displayHeight}px`,
+          }}
         >
-          <Layer>
-            <Group
-              id="imageGroup"
-              scaleX={zoom}
-              scaleY={zoom}
-              x={(stageWidth - image.width * zoom) / 2}
-              y={(stageHeight - image.height * zoom) / 2}
-            >
-              <URLImage
-                src={image.url}
-                width={image.width}
-                height={image.height}
-                draggable={!isDrawing.current}
-              />
-              {lines.map((line, i) => (
-                <Line
-                  key={i}
-                  points={line.points}
-                  stroke={"#df4b26"}
-                  strokeWidth={brushSize}
-                  tension={0.5}
-                  lineCap="round"
-                  lineJoin="round"
-                  globalCompositeOperation={"source-over"}
-                  opacity={0.5}
+          <Stage
+            width={displayWidth}
+            height={displayHeight}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onTouchEnd={handleMouseUp}
+            ref={stageRef}
+          >
+            <Layer>
+              <Group id="imageGroup" scaleX={zoom} scaleY={zoom}>
+                <URLImage
+                  src={image.url}
+                  width={image.width}
+                  height={image.height}
+                  draggable={false}
                 />
-              ))}
-            </Group>
-          </Layer>
-        </Stage>
-
-        {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
-
-        {/* download button */}
-        <div className="absolute  right-4 top-4 z-50 border">
-          <DownloadButton url={image.url} />
+                {lines.map((line, i) => (
+                  <Line
+                    key={i}
+                    points={line.points}
+                    {...LINE_CONFIG}
+                    strokeWidth={brushSize}
+                  />
+                ))}
+              </Group>
+            </Layer>
+          </Stage>
         </div>
 
-        {/* zoom buttons + and - */}
+        {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
+      </div>
+
+      <div className="w-full py-3 border-t bg-background flex items-center justify-end pr-4 flex-shrink-0">
         <ZoomButton />
       </div>
     </div>

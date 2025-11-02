@@ -18,10 +18,13 @@ const DownloadButton = ({
   return (
     <Button
       onClick={handleDownload}
-      className={cn("gap-1.5 rounded-md text-black active-effect", className)}
+      className={cn(
+        "gap-1.5 rounded-md text-neutral-600 active-effect cursor-pointer",
+        className
+      )}
     >
-      Download
-      <Download className="size-4" />
+      <span className="text-xs font-bold">Download</span>
+      <Download className="size-3.5" strokeWidth={3} />
     </Button>
   );
 };
