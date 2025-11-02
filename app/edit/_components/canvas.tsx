@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Stage, Layer, Image, StageProps, Group, Line } from "react-konva";
 import useImage from "use-image";
-import DownloadButton from "./download-button";
-import useEditingStore from "@/store/editing-store";
-import React from "react";
 import { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
+import useEditingStore from "@/store/editing-store";
 import useInPaintStore from "@/store/inpaint-store";
+import DownloadButton from "./download-button";
 import ZoomButton from "./zoom-button";
 import MagicEraserPopup from "@/tools/magic-eraser";
 
@@ -16,12 +15,26 @@ const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
   return null;
 };
 
+const PADDING = 80; // Padding for initial zoom calculation
+const LINE_CONFIG = {
+  stroke: "#df4b26",
+  tension: 0.5,
+  lineCap: "round" as const,
+  lineJoin: "round" as const,
+  globalCompositeOperation: "source-over" as const,
+  opacity: 0.5,
+};
+
 const ImageEditorCanvas = () => {
-  const [stageWidth, setStageWidth] = useState<number>(800);
-  const [stageHeight, setStageHeight] = useState<number>(600);
+  const [stageDimensions, setStageDimensions] = useState({
+    width: 800,
+    height: 600,
+  });
+  const [hasInitializedZoom, setHasInitializedZoom] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const previousImageUrl = useRef<string>("");
+  const isDrawing = useRef(false);
+  const stageRef = useRef<Konva.Stage>(null);
 
   const {
     appliedTool: currentTool,
@@ -31,9 +44,8 @@ const ImageEditorCanvas = () => {
     setZoom,
   } = useEditingStore();
   const { lines, setLines, clearLines, brushSize } = useInPaintStore();
-  const isDrawing = useRef(false);
-  const stageRef = useRef<Konva.Stage>(null);
 
+  // Helper to get local coordinates from screen coordinates
   const getLocalPoint = useCallback(
     (stage: Konva.Stage, screenPoint: { x: number; y: number }) => {
       const imageGroup = stage.findOne("#imageGroup");
@@ -44,6 +56,7 @@ const ImageEditorCanvas = () => {
     []
   );
 
+  // Merge painted lines with the image
   const mergeImageWithLines = useCallback(() => {
     if (lines.length === 0) return;
 
@@ -70,24 +83,15 @@ const ImageEditorCanvas = () => {
       lines.forEach((line) => {
         const konvaLine = new Konva.Line({
           points: line.points,
-          stroke: "#df4b26",
+          ...LINE_CONFIG,
           strokeWidth: brushSize,
-          tension: 0.5,
-          lineCap: "round",
-          lineJoin: "round",
-          globalCompositeOperation: "source-over",
-          opacity: 0.5,
         });
         tempLayer.add(konvaLine);
       });
 
       tempLayer.batchDraw();
 
-      const uri = tempStage.toDataURL({
-        mimeType: "image/png",
-        quality: 1,
-      });
-
+      const uri = tempStage.toDataURL({ mimeType: "image/png", quality: 1 });
       setImage(uri, image.width, image.height);
       clearLines();
       tempStage.destroy();
@@ -99,22 +103,17 @@ const ImageEditorCanvas = () => {
     };
 
     tempImage.src = image.url;
-  }, [
-    lines,
-    brushSize,
-    image.width,
-    image.height,
-    image.url,
-    setImage,
-    clearLines,
-  ]);
+  }, [lines, brushSize, image, setImage, clearLines]);
 
+  // Mouse event handlers for drawing
   const handleMouseDown = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
       if (currentTool?.tool_id !== "eraser") return;
+
       isDrawing.current = true;
       const stage = e.target.getStage();
       if (!stage) return;
+
       const point = stage.getPointerPosition();
       if (!point) return;
 
@@ -129,8 +128,10 @@ const ImageEditorCanvas = () => {
   const handleMouseMove = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
       if (!isDrawing.current || currentTool?.tool_id !== "eraser") return;
+
       const stage = e.target.getStage();
       if (!stage) return;
+
       const point = stage.getPointerPosition();
       if (!point) return;
 
@@ -154,58 +155,49 @@ const ImageEditorCanvas = () => {
     mergeImageWithLines();
   }, [mergeImageWithLines]);
 
+  // Initialize stage dimensions and zoom when image loads or changes
   useEffect(() => {
-    if (containerRef.current && image.url && image.width && image.height) {
-      const containerWidth = containerRef.current.offsetWidth;
-      const containerHeight = containerRef.current.offsetHeight;
-
-      // Set stage dimensions to match image
-      setStageWidth(image.width);
-      setStageHeight(image.height);
-
-      // Only calculate initial zoom if this is a new image
-      if (previousImageUrl.current !== image.url) {
-        // Calculate zoom to fit image within container with some padding
-        const padding = 80; // padding in pixels
-        const scaleX = (containerWidth - padding) / image.width;
-        const scaleY = (containerHeight - padding) / image.height;
-        const initialZoom = Math.min(scaleX, scaleY, 1); // Don't zoom in beyond 100% initially
-
-        setZoom(initialZoom);
-        previousImageUrl.current = image.url;
-      }
+    if (!containerRef.current || !image.url || !image.width || !image.height) {
+      return;
     }
-  }, [image, setZoom]);
 
-  // Calculate the actual display dimensions based on zoom
-  const displayWidth = stageWidth * zoom;
-  const displayHeight = stageHeight * zoom;
+    const containerWidth = containerRef.current.offsetWidth;
+    const containerHeight = containerRef.current.offsetHeight;
+
+    // Update stage dimensions
+    setStageDimensions({ width: image.width, height: image.height });
+
+    // Calculate and set initial zoom only once per image
+    if (!hasInitializedZoom) {
+      const scaleX = (containerWidth - PADDING) / image.width;
+      const scaleY = (containerHeight - PADDING) / image.height;
+      const initialZoom = Math.min(scaleX, scaleY, 1);
+
+      setZoom(initialZoom);
+      setHasInitializedZoom(true);
+    }
+  }, [image.url, image.width, image.height, setZoom, hasInitializedZoom]);
+
+  // Reset zoom initialization flag when image changes
+  useEffect(() => {
+    setHasInitializedZoom(false);
+  }, [image.url]);
+
+  // Calculate display dimensions
+  const displayWidth = stageDimensions.width * zoom;
+  const displayHeight = stageDimensions.height * zoom;
 
   return (
     <div className="w-full h-full flex flex-col relative">
-      <div className="w-full border-b bg-background px-4 py-3 flex items-center justify-between">
-        <div className="text-sm font-medium">Image Editor</div>
+      <div className="w-full border-b bg-background px-4 py-3 flex items-center justify-end flex-shrink-0">
         <DownloadButton url={image.url} />
       </div>
 
-      <div
-        ref={containerRef}
-        className="flex-1 min-h-0"
-        style={{
-          overflow: "auto",
-          position: "relative",
-        }}
-      >
+      {/* Canvas Area */}
+      <div ref={containerRef} className="flex-1 min-h-0 overflow-auto relative">
         <div
+          className="absolute inset-0 flex items-center justify-center"
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             minWidth: `${displayWidth}px`,
             minHeight: `${displayHeight}px`,
           }}
@@ -231,13 +223,8 @@ const ImageEditorCanvas = () => {
                   <Line
                     key={i}
                     points={line.points}
-                    stroke={"#df4b26"}
+                    {...LINE_CONFIG}
                     strokeWidth={brushSize}
-                    tension={0.5}
-                    lineCap="round"
-                    lineJoin="round"
-                    globalCompositeOperation={"source-over"}
-                    opacity={0.5}
                   />
                 ))}
               </Group>
@@ -248,7 +235,7 @@ const ImageEditorCanvas = () => {
         {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
       </div>
 
-      <div className="w-full py-3 border-t bg-background flex items-center justify-end pr-4 ">
+      <div className="w-full py-3 border-t bg-background flex items-center justify-end pr-4 flex-shrink-0">
         <ZoomButton />
       </div>
     </div>
