@@ -27,6 +27,12 @@ const effects: EffectProps[] = [
     picture: "/PictoAI/golden.png",
     prompt: EFFECTS_LIGHTING_PROMPTS.Golden_Silhouette,
   },
+  {
+    id: nanoid(),
+    name: "Purple Spotlight",
+    picture: "/PictoAI/Purple_Spotlight.png",
+    prompt: EFFECTS_LIGHTING_PROMPTS.Purple_Spotlight,
+  },
 ];
 
 export { effects };

@@ -7,6 +7,8 @@ export const EFFECTS_LIGHTING_PROMPTS = {
     "Make these changes in the provided image - The lighting should be dramatic and colorful, with two distinct gel lights illuminating the scene. One light, a vibrant magenta or deep pink, should come from one side, casting a strong hue across one half of the face, hair, and clothing. The other light, a cool cyan or electric blue, should come from the opposite side, highlighting the other half of the face, hair, and clothing. The colors should blend and reflect on the skin and the clothing, creating a futuristic and striking visual effect. The background should be a deep, muted purple or maroon, allowing the subject and the colorful lighting to stand out without distraction. The makeup on the subject's face should complement the lighting, with bright, contrasting eyeshadow.",
   Golden_Silhouette:
     "side profile of the person provided in the image, intensely backlit with a warm, golden-white rim light. Strong silhouette against a pure black background. Dramatic, high-contrast studio portrait with a mysterious mood.",
+  Purple_Spotlight:
+    "Apply these styles on the uploaded image - Dramatic studio portrait lighting with a warm, circular spotlight from the side, creating soft shadows and highlighting features. Background features a gradient of purple and pink with a strong, round, pink light source on the left. Maintain the subject's original expression, look, hair style, and clothing from the uploaded image.",
 };
 
 export const TOOLS_PROMPTS = {
