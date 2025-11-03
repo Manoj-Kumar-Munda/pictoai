@@ -17,10 +17,10 @@ const EditSidebar = () => {
         ))}
       </div>
       <div className="space-y-1">
-        <Heading>Trending</Heading>
+        <Heading>Lightings</Heading>
 
         <div className="h-full overflow-y-auto">
-          <div className="grid grid-cols-3 gap-y-4 gap-x-3.5">
+          <div className="grid grid-cols-3 gap-y-4 gap-x-2">
             {effects.map((effect) => (
               <AIEffectCard key={effect.name} {...effect} />
             ))}
@@ -29,9 +29,9 @@ const EditSidebar = () => {
       </div>
 
       <div className="space-y-1">
-        <Heading>Scene Swaps</Heading>
+        <Heading>Aesthetics</Heading>
         <div className="h-full overflow-y-auto">
-          <div className="grid grid-cols-3 gap-y-4 gap-x-3.5">
+          <div className="grid grid-cols-3 gap-y-4 gap-x-2">
             {sceneSwaps.map((swap) => (
               <AIEffectCard key={swap.name} {...swap} />
             ))}
