@@ -11,6 +11,7 @@ export interface EffectProps {
   name: string;
   picture?: string;
   prompt: string;
+  category: "lighting" | "";
 }
 
 export interface ToolProps extends Omit<EffectProps, "picture"> {
