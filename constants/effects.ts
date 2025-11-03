@@ -38,6 +38,13 @@ const effects: EffectProps[] = [
     prompt: EFFECTS_LIGHTING_PROMPTS.Purple_Spotlight,
     category: "lighting",
   },
+  {
+    id: nanoid(),
+    name: "Cyberpunk",
+    picture: "/PictoAI/cyberpunk_neon_noir.png",
+    prompt: EFFECTS_LIGHTING_PROMPTS.Cyberpunk_Neon_Noir,
+    category: "lighting",
+  }
 ];
 
 export { effects };
