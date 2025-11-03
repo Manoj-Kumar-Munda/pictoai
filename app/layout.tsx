@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,10 +25,12 @@ export default function RootLayout({
         <link rel="icon" type="image/png" href="/logo.png" />
       </head>
       <body className={`antialiased ${inter.variable} `}>
-        <div className="min-h-svh">
-          <Header />
-          {children}
-        </div>
+        <ThemeProvider>
+          <div className="min-h-svh">
+            <Header />
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
