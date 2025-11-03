@@ -26,8 +26,8 @@ export default function RootLayout({
       </head>
       <body className={`antialiased ${inter.variable} `}>
         <ThemeProvider>
-          <div className="min-h-svh">
-            <Header />
+          <div className="min-h-svh ">
+            {/* <Header /> */}
             {children}
           </div>
         </ThemeProvider>
