@@ -11,6 +11,8 @@ export const EFFECTS_LIGHTING_PROMPTS = {
     "Apply these styles on the uploaded image - Dramatic studio portrait lighting with a warm, circular spotlight from the side, creating soft shadows and highlighting features. Background features a gradient of purple and pink with a strong, round, pink light source on the left. Maintain the subject's original expression, look, hair style, and clothing from the uploaded image.",
   Cyberpunk_Neon_Noir:
     "Transform this image with a 'Cyberpunk Neon Noir' filter. Establish a dominant color palette of deep blues, vibrant purples, and intense fuchsia/electric teal neon highlights. Significantly darken the overall image, creating strong contrasts between bright, glowing elements and deep shadows. Add a subtle, wet-look sheen to surfaces and enhance reflections of the neon lights. Incorporate a slight film grain and a sense of atmospheric haze for a gritty, futuristic urban mood.",
+  Golden_hour:
+    "Apply a 'Golden Hour' cinematic filter to this image. Introduce soft, diffused, warm golden light, as if from a low sun, casting long, gentle shadows. Enhance overall warmth with amber/orange highlights and subtle purple/rose tones in deeper shadows. Add a very faint, soft bloom around existing light sources. Aim for a serene, nostalgic, and romantic atmosphere with rich, deep colors.",
 };
 
 export const TOOLS_PROMPTS = {

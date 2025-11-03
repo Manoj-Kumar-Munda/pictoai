@@ -44,7 +44,14 @@ const effects: EffectProps[] = [
     picture: "/PictoAI/cyberpunk_neon_noir.png",
     prompt: EFFECTS_LIGHTING_PROMPTS.Cyberpunk_Neon_Noir,
     category: "lighting",
-  }
+  },
+  {
+    id: nanoid(),
+    name: "Golden Hour",
+    picture: "/PictoAI/golden_hour.png",
+    prompt: EFFECTS_LIGHTING_PROMPTS.Golden_hour,
+    category: "lighting",
+  },
 ];
 
 export { effects };
