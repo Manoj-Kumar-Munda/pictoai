@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -7,6 +7,16 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+});
+
+const geistSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
 });
 
 export const metadata: Metadata = {
@@ -24,9 +34,9 @@ export default function RootLayout({
       <head>
         <link rel="icon" type="image/png" href="/logo.png" />
       </head>
-      <body className={`antialiased ${inter.variable} `}>
+      <body className={`antialiased ${inter.variable} ${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider>
-          <div className="min-h-svh">
+          <div className="min-h-svh ">
             <Header />
             {children}
           </div>
