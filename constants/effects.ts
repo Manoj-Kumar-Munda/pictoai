@@ -12,7 +12,7 @@ const effects: EffectProps[] = [
   },
   {
     id: nanoid(),
-    name: "Low-key",
+    name: "Chiaroscuro",
     picture: "/PictoAI/low-key.png",
     prompt: EFFECTS_LIGHTING_PROMPTS.low_key,
     category: "lighting",
