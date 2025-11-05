@@ -12,8 +12,8 @@ const Header = () => {
   return (
     <header
       className={cn(
-        "flex items-center justify-between p-4 fixed top-0 inset-x-0 rounded-none z-50 h-16 lg:inset-x-8 xl:inset-x-12",
-        !isHome && "xl:inset-x-2 lg:inset-x-2"
+        "flex items-center justify-between px-4 py-3 sm:p-4 fixed top-0 inset-x-0 rounded-none z-50 h-14 sm:h-16 lg:inset-x-8 xl:inset-x-12",
+        !isHome && "inset-x-0 xl:inset-x-0 lg:inset-x-0 bg-black"
       )}
     >
       {/*logo */}
@@ -21,18 +21,17 @@ const Header = () => {
         {/* <Image src={logo} alt="logo" width={48} height={48} /> */}
         <span
           className={cn(
-            "font-semibold text-lg font-sans text-white",
-            !isHome && " text-neutral-800"
+            "font-semibold text-base sm:text-lg font-sans text-white"
           )}
         >
           Picto AI
         </span>
       </Link>
 
-      {/* user actions or profile avatar */}
-      <div className="flex items-center gap-3">
+      {/* profile avatar */}
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* <ThemeToggle /> */}
-        <Avatar>
+        <Avatar className="w-8 h-8 sm:w-10 sm:h-10">
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
