@@ -6,20 +6,35 @@ interface ThumbnailProps {
   picture?: string;
   isApplied: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }
 
-const Thumbnail = ({ name, picture, isApplied, onClick }: ThumbnailProps) => {
+const Thumbnail = ({
+  name,
+  picture,
+  isApplied,
+  onClick,
+  disabled = false,
+}: ThumbnailProps) => {
+  const baseClasses =
+    "bg-zinc-800/50 group transition-all duration-300 ease-out backdrop-blur-sm border border-zinc-700/50 rounded-lg p-1.5 w-full shadow-md shadow-black/30";
+
   return (
     <div
-      className={cn(
-        "bg-zinc-800/50 group hover:bg-zinc-800/80 transition-all duration-300 ease-out backdrop-blur-sm",
-        "border border-zinc-700/50 hover:border-zinc-600/70 rounded-lg p-1.5 cursor-pointer w-full",
-        "shadow-md shadow-black/30 hover:shadow-lg hover:shadow-black/40",
-        isApplied && "active-effect brightness-110 border-cyan-400/80 shadow-cyan-500/30"
-      )}
-      onClick={onClick}
+      className={cn(baseClasses, {
+        "hover:bg-zinc-800/80 hover:border-zinc-600/70 hover:shadow-lg hover:shadow-black/40 cursor-pointer":
+          !disabled,
+        "opacity-50 cursor-not-allowed": disabled,
+        "active-effect brightness-110 border-cyan-400/80 shadow-cyan-500/30":
+          isApplied && !disabled,
+      })}
+      onClick={() => {
+        if (disabled) return;
+        onClick();
+      }}
       role="button"
-      tabIndex={0}
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
     >
       <div className="relative overflow-hidden rounded-md mb-1">
         {picture ? (
@@ -37,10 +52,12 @@ const Thumbnail = ({ name, picture, isApplied, onClick }: ThumbnailProps) => {
           <div className="w-full h-16 bg-zinc-700/50 rounded-md" />
         )}
       </div>
-      <p className={cn(
-        "text-[11px] text-center font-medium truncate overflow-hidden leading-tight",
-        isApplied ? "text-black" : "text-zinc-300"
-      )}>
+      <p
+        className={cn(
+          "text-[11px] text-center font-medium truncate overflow-hidden leading-tight",
+          isApplied && !disabled ? "text-black" : "text-zinc-300"
+        )}
+      >
         {name}
       </p>
     </div>
