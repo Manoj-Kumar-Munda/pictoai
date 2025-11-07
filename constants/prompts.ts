@@ -13,6 +13,8 @@ export const EFFECTS_LIGHTING_PROMPTS = {
     "Transform this image with a 'Cyberpunk Neon Noir' filter. Establish a dominant color palette of deep blues, vibrant purples, and intense fuchsia/electric teal neon highlights. Significantly darken the overall image, creating strong contrasts between bright, glowing elements and deep shadows. Add a subtle, wet-look sheen to surfaces and enhance reflections of the neon lights. Incorporate a slight film grain and a sense of atmospheric haze for a gritty, futuristic urban mood.",
   Golden_hour:
     "Apply a 'Golden Hour' cinematic filter to this image. Introduce soft, diffused, warm golden light, as if from a low sun, casting long, gentle shadows. Enhance overall warmth with amber/orange highlights and subtle purple/rose tones in deeper shadows. Add a very faint, soft bloom around existing light sources. Aim for a serene, nostalgic, and romantic atmosphere with rich, deep colors.",
+  Gritty_Urban:
+    "Apply a 'Gritty Urban Decay' filter. Desaturate colors significantly, leaning towards muted browns, greys, and faded blues. Enhance contrast to create deep, crushed shadows and stark highlights. Add a prominent, coarse film grain and a distressed texture overlay to simulate age and wear. Introduce subtle vignettes and a slightly desaturated, almost monochromatic feel for a raw, melancholic, and tough aesthetic.",
 };
 
 export const TOOLS_PROMPTS = {

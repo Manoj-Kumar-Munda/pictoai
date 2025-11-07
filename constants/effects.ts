@@ -1,9 +1,6 @@
 import { type EffectProps } from "@/types";
 import { nanoid } from "nanoid";
-import {
-  EFFECTS_LIGHTING_PROMPTS,
-  RESTYLE
-} from "./prompts";
+import { EFFECTS_LIGHTING_PROMPTS, RESTYLE } from "./prompts";
 
 const effects: EffectProps[] = [
   {
@@ -66,6 +63,13 @@ const filterEffects: EffectProps[] = [
     name: "Golden Hour",
     picture: "/PictoAI/golden_hour.png",
     prompt: EFFECTS_LIGHTING_PROMPTS.Golden_hour,
+    category: "filter",
+  },
+  {
+    id: nanoid(),
+    name: "Gritty Urban",
+    picture: "/PictoAI/gritty-urban.png",
+    prompt: EFFECTS_LIGHTING_PROMPTS.Gritty_Urban,
     category: "filter",
   },
 ];
