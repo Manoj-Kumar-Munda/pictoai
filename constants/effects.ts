@@ -1,6 +1,9 @@
 import { type EffectProps } from "@/types";
 import { nanoid } from "nanoid";
-import { EFFECTS_LIGHTING_PROMPTS } from "./prompts";
+import {
+  EFFECTS_LIGHTING_PROMPTS,
+  RESTYLE
+} from "./prompts";
 
 const effects: EffectProps[] = [
   {
@@ -38,20 +41,33 @@ const effects: EffectProps[] = [
     prompt: EFFECTS_LIGHTING_PROMPTS.Purple_Spotlight,
     category: "lighting",
   },
+];
+
+const Restyles: EffectProps[] = [
+  {
+    id: nanoid(),
+    name: "Focused Beam",
+    picture: `/PictoAI/red-focused-beam.png`,
+    prompt: RESTYLE.teal_background,
+    category: "lighting",
+  },
+];
+
+const filterEffects: EffectProps[] = [
   {
     id: nanoid(),
     name: "Cyberpunk",
     picture: "/PictoAI/cyberpunk_neon_noir.png",
     prompt: EFFECTS_LIGHTING_PROMPTS.Cyberpunk_Neon_Noir,
-    category: "lighting",
+    category: "filter",
   },
   {
     id: nanoid(),
     name: "Golden Hour",
     picture: "/PictoAI/golden_hour.png",
     prompt: EFFECTS_LIGHTING_PROMPTS.Golden_hour,
-    category: "lighting",
+    category: "filter",
   },
 ];
 
-export { effects };
+export { effects, filterEffects, Restyles };

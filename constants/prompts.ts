@@ -20,7 +20,7 @@ export const TOOLS_PROMPTS = {
     "Remove the painted object from the image keep the rest image as it is.",
 };
 
-export const SCENE_SWAP_PROMPTS = {
+export const RESTYLE = {
   teal_background:
     "A full-length portrait of the subject in the provided image standing against a dark teal wooden slatted wall. She has long, dark brown wavy hair that cascades over her right shoulder and down her back. Her skin is warm-toned. She is wearing a form-fitting, vibrant red halter-neck dress with ruched detailing on the bodice. Her left hand is placed on her hip, showcasing a gold ring on her ring finger, and her right arm is relaxed at her side. She is wearing gold hoop earrings. Her gaze is directed towards the viewer, and her lips are slightly parted. A strong, warm light source from the upper left casts a bright highlight on her face, chest, and a portion of her dress, creating a dramatic shadow on the wall behind her. The overall mood is sophisticated and alluring, with a focus on color contrast and subtle lighting effects.",
 };

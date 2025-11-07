@@ -11,10 +11,10 @@ export interface EffectProps {
   name: string;
   picture?: string;
   prompt: string;
-  category: "lighting" | "";
+  category: "lighting" | "filter";
 }
 
-export interface ToolProps extends Omit<EffectProps, "picture"> {
+export interface ToolProps extends Omit<EffectProps, "picture" | "category"> {
   tool_id: ToolTypes;
   icon?: React.ElementType<{ className?: string }>;
   description: string;

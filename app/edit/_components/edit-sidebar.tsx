@@ -1,11 +1,10 @@
 "use client";
 import AIEffectCard from "@/components/effect-card";
-import { effects } from "@/constants/effects";
+import { effects, filterEffects, Restyles } from "@/constants/effects";
 import Heading from "@/components/heading";
 
 import EditTool from "@/components/edit-tool";
 import { tools } from "@/constants/tools";
-import sceneSwaps from "@/constants/scene-swaps";
 
 const EditSidebar = () => {
   return (
@@ -18,12 +17,12 @@ const EditSidebar = () => {
           ))}
         </div>
       </div>
-      
+
       <div className="space-y-2">
-        <Heading className="border-b border-zinc-800/50 pb-1">Lightings</Heading>
+        <Heading className="border-b border-zinc-800/50 pb-1">Filters</Heading>
         <div className="">
           <div className="grid grid-cols-3 gap-2">
-            {effects.map((effect) => (
+            {filterEffects.map((effect) => (
               <AIEffectCard key={effect.name} {...effect} />
             ))}
           </div>
@@ -31,11 +30,26 @@ const EditSidebar = () => {
       </div>
 
       <div className="space-y-2.5">
-        <Heading className="border-b border-zinc-800/50 pb-1.5">Aesthetics</Heading>
+        <Heading className="border-b border-zinc-800/50 pb-1.5">
+          Aesthetics
+        </Heading>
         <div className="overflow-y-auto max-h-[40vh]">
           <div className="grid grid-cols-3 gap-2">
-            {sceneSwaps.map((swap) => (
+            {effects.map((swap) => (
               <AIEffectCard key={swap.name} {...swap} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-2.5">
+        <Heading className="border-b border-zinc-800/50 pb-1.5">
+          Restyle
+        </Heading>
+        <div className="overflow-y-auto max-h-[40vh]">
+          <div className="grid grid-cols-3 gap-2">
+            {Restyles.map((restyle) => (
+              <AIEffectCard key={restyle.name} {...restyle} />
             ))}
           </div>
         </div>

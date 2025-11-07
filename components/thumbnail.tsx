@@ -17,7 +17,7 @@ const Thumbnail = ({
   disabled = false,
 }: ThumbnailProps) => {
   const baseClasses =
-    "bg-zinc-800/50 group transition-all duration-300 ease-out backdrop-blur-sm border border-zinc-700/50 rounded-lg p-1.5 w-full shadow-md shadow-black/30";
+    "bg-zinc-800/50 group transition-all duration-300 ease-out backdrop-blur-sm border border-zinc-700/50 rounded-lg p-1 w-full shadow-md shadow-black/30";
 
   return (
     <div
@@ -36,7 +36,7 @@ const Thumbnail = ({
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
     >
-      <div className="relative overflow-hidden rounded-md mb-1">
+      <div className="relative overflow-hidden rounded-md">
         {picture ? (
           <Image
             urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL!}
@@ -52,14 +52,14 @@ const Thumbnail = ({
           <div className="w-full h-16 bg-zinc-700/50 rounded-md" />
         )}
       </div>
-      <p
+      {/* <p
         className={cn(
           "text-[11px] text-center font-medium truncate overflow-hidden leading-tight",
           isApplied && !disabled ? "text-black" : "text-zinc-300"
         )}
       >
         {name}
-      </p>
+      </p> */}
     </div>
   );
 };
