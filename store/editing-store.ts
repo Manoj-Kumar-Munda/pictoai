@@ -31,7 +31,7 @@ const useEditingStore = create<EditingStore>((set) => ({
   appliedTool: null,
   result: "",
   zoom: 1,
-  isProcessing: true,
+  isProcessing: false,
   undo: () => {},
   redo: () => {},
   clear: () => {},
