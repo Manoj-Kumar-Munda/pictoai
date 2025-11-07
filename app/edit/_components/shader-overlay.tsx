@@ -111,6 +111,7 @@ const ShaderOverlay: React.FC<ShaderOverlayProps> = ({
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
   const programRef = useRef<WebGLProgram | null>(null);
+  const bufferRef = useRef<WebGLBuffer | null>(null);
   const [glAvailable, setGlAvailable] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -152,7 +153,13 @@ const ShaderOverlay: React.FC<ShaderOverlayProps> = ({
 
     // Setup geometry (two-triangle full-screen quad)
     const positionLoc = gl.getAttribLocation(program, "a_position");
-    const buffer = gl.createBuffer();
+    
+    // Create buffer only if we don't have one
+    if (!bufferRef.current) {
+      bufferRef.current = gl.createBuffer();
+    }
+    
+    const buffer = bufferRef.current;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     const verts = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
     gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
@@ -187,9 +194,36 @@ const ShaderOverlay: React.FC<ShaderOverlayProps> = ({
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
       startRef.current = 0;
+      // Clean up WebGL buffer to prevent memory leak
+      if (bufferRef.current && gl) {
+        gl.deleteBuffer(bufferRef.current);
+        bufferRef.current = null;
+      }
       // keep program for reuse across activations
     };
   }, [width, height, active]);
+
+  // Cleanup effect when component unmounts
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    return () => {
+      // Clean up all WebGL resources on unmount
+      if (bufferRef.current && canvas) {
+        const gl = canvas.getContext("webgl");
+        if (gl && bufferRef.current) {
+          gl.deleteBuffer(bufferRef.current);
+        }
+        bufferRef.current = null;
+      }
+      if (programRef.current && canvas) {
+        const gl = canvas.getContext("webgl");
+        if (gl && programRef.current) {
+          gl.deleteProgram(programRef.current);
+        }
+        programRef.current = null;
+      }
+    };
+  }, []);
 
   if (!active) return null;
 

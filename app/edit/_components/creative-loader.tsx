@@ -60,7 +60,7 @@ const CreativeLoader: React.FC<CreativeLoaderProps> = ({
 }) => {
   const c = { ...palettes[variant], ...(colors || {}) } as Required<LoaderColors>;
   return (
-    <div className="relative flex flex-col items-center gap-4" aria-live="polite" aria-busy aria-label={label}>
+    <div className="relative flex flex-col items-center gap-4" aria-live="polite" aria-label={label}>
       <div className="relative h-28 w-28">
         {/* soft glow */}
         <div
