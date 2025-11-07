@@ -7,6 +7,7 @@ interface EditingStore {
   appliedTool: ToolProps | null;
   result: string;
   zoom: number;
+  isProcessing: boolean;
   undo: () => void;
   redo: () => void;
   clear: () => void;
@@ -15,6 +16,7 @@ interface EditingStore {
   setAppliedTool: (tool: ToolProps) => void;
   setResult: (result: string) => void;
   setZoom: (zoom: number) => void;
+  setProcessing: (isProcessing: boolean) => void;
   zoomIn: () => void;
   zoomOut: () => void;
 }
@@ -29,6 +31,7 @@ const useEditingStore = create<EditingStore>((set) => ({
   appliedTool: null,
   result: "",
   zoom: 1,
+  isProcessing: true,
   undo: () => {},
   redo: () => {},
   clear: () => {},
@@ -39,6 +42,7 @@ const useEditingStore = create<EditingStore>((set) => ({
   setAppliedTool: (tool) => set({ appliedTool: tool }),
   setResult: (result) => set({ result }),
   setZoom: (zoom) => set({ zoom }),
+  setProcessing: (isProcessing) => set({ isProcessing }),
   zoomIn: () => set((state) => ({ zoom: state.zoom + 0.1 })),
   zoomOut: () => set((state) => ({ zoom: Math.max(state.zoom - 0.1, 0.1) })),
 }));

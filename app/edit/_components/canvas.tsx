@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Stage, Layer, Image, StageProps, Group, Line } from "react-konva";
+import { Stage, Layer, Image as KonvaImage, StageProps, Group, Line } from "react-konva";
 import useImage from "use-image";
 import { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
@@ -8,10 +8,11 @@ import useInPaintStore from "@/store/inpaint-store";
 import DownloadButton from "./download-button";
 import ZoomButton from "./zoom-button";
 import MagicEraserPopup from "@/tools/magic-eraser";
+import ShaderOverlay from "./shader-overlay";
 
 const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
   const [image] = useImage(src, "anonymous");
-  if (image) return <Image image={image} {...rest} />;
+  if (image) return <KonvaImage image={image} {...rest} />;
   return null;
 };
 
@@ -42,6 +43,7 @@ const ImageEditorCanvas = () => {
     setImage,
     zoom,
     setZoom,
+    isProcessing,
   } = useEditingStore();
   const { lines, setLines, clearLines, brushSize } = useInPaintStore();
 
@@ -182,7 +184,7 @@ const ImageEditorCanvas = () => {
     if (image) {
       setStageDimensions({ width: image.width, height: image.height });
     }
-  }, [image.url]);
+  }, [image]);
 
   // Calculate display dimensions
   const displayWidth = stageDimensions.width * zoom;
@@ -203,34 +205,39 @@ const ImageEditorCanvas = () => {
             minHeight: `${displayHeight}px`,
           }}
         >
-          <Stage
-            width={displayWidth}
-            height={displayHeight}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onTouchEnd={handleMouseUp}
-            ref={stageRef}
-          >
-            <Layer>
-              <Group id="imageGroup" scaleX={zoom} scaleY={zoom}>
-                <URLImage
-                  src={image.url}
-                  width={image.width}
-                  height={image.height}
-                  draggable={false}
-                />
-                {lines.map((line, i) => (
-                  <Line
-                    key={i}
-                    points={line.points}
-                    {...LINE_CONFIG}
-                    strokeWidth={brushSize}
+          <div className="relative" style={{ width: displayWidth, height: displayHeight }}>
+            <Stage
+              width={displayWidth}
+              height={displayHeight}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onTouchEnd={handleMouseUp}
+              ref={stageRef}
+            >
+              <Layer>
+                <Group id="imageGroup" scaleX={zoom} scaleY={zoom}>
+                  <URLImage
+                    src={image.url}
+                    width={image.width}
+                    height={image.height}
+                    draggable={false}
                   />
-                ))}
-              </Group>
-            </Layer>
-          </Stage>
+                  {lines.map((line, i) => (
+                    <Line
+                      key={i}
+                      points={line.points}
+                      {...LINE_CONFIG}
+                      strokeWidth={brushSize}
+                    />
+                  ))}
+                </Group>
+              </Layer>
+            </Stage>
+
+            {/* Shader overlay when processing */}
+            <ShaderOverlay width={displayWidth} height={displayHeight} active={!!isProcessing} />
+          </div>
         </div>
 
         {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
