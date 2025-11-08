@@ -71,7 +71,7 @@ const CreativeLoader: React.FC<CreativeLoaderProps> = ({
         />
         {/* pulsing core */}
         <div
-          className="absolute inset-0 m-auto h-16 w-16 rounded-full mix-blend-screen animate-[pulseCore_2s_ease-in-out_infinite]"
+          className="absolute inset-0 m-auto h-16 w-16 rounded-full mix-blend-screen animate-pulse-core"
           style={{ backgroundColor: c.core }}
         />
         {/* orbit ring */}
@@ -80,13 +80,13 @@ const CreativeLoader: React.FC<CreativeLoaderProps> = ({
           style={{ borderColor: c.ring }}
         />
         {/* orbiting nodes */}
-        <div className="absolute inset-0 animate-[orbit_4s_linear_infinite]">
+        <div className="absolute inset-0 animate-orbit">
           <div
             className="absolute left-1/2 top-0 -translate-x-1/2 h-3 w-3 rounded-full"
             style={{ backgroundColor: c.node1, boxShadow: c.node1Shadow }}
           />
         </div>
-        <div className="absolute inset-0 animate-[orbit_6s_linear_infinite_reverse]">
+        <div className="absolute inset-0 animate-orbit-reverse">
           <div
             className="absolute left-1/2 top-0 -translate-x-1/2 h-2.5 w-2.5 rounded-full"
             style={{ backgroundColor: c.node2, boxShadow: c.node2Shadow }}
@@ -103,23 +103,6 @@ const CreativeLoader: React.FC<CreativeLoaderProps> = ({
           }}
         />
       </div>
-
-      {/* keyframes */}
-      <style jsx>{`
-        @keyframes orbit {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes pulseCore {
-          0% { transform: scale(0.95); opacity: 0.6; }
-          50% { transform: scale(1.05); opacity: 1; }
-          100% { transform: scale(0.95); opacity: 0.6; }
-        }
-        @keyframes shimmer {
-          0% { transform: translateX(-35%); }
-          100% { transform: translateX(135%); }
-        }
-      `}</style>
     </div>
   );
 };
