@@ -50,9 +50,9 @@ const EditTool = (tool: ToolProps) => {
         >
           {Icon ? (
             <Icon
-              strokeWidth={2.5}
+              strokeWidth={2}
               className={cn(
-                "size-5 transition-transform duration-300 group-hover:scale-110",
+                "size-4.5 transition-transform duration-300 group-hover:scale-110",
                 activeTool?.name === name ? "text-black" : "text-zinc-300"
               )}
             />

@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Stage, Layer, Image as KonvaImage, StageProps, Group, Line } from "react-konva";
+import {
+  Stage,
+  Layer,
+  Image as KonvaImage,
+  StageProps,
+  Group,
+  Line,
+} from "react-konva";
 import useImage from "use-image";
 import { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
@@ -205,7 +212,10 @@ const ImageEditorCanvas = () => {
             minHeight: `${displayHeight}px`,
           }}
         >
-          <div className="relative" style={{ width: displayWidth, height: displayHeight }}>
+          <div
+            className="relative"
+            style={{ width: displayWidth, height: displayHeight }}
+          >
             <Stage
               width={displayWidth}
               height={displayHeight}
@@ -236,16 +246,21 @@ const ImageEditorCanvas = () => {
             </Stage>
 
             {/* Shader overlay when processing */}
-            <ShaderOverlay width={displayWidth} height={displayHeight} active={!!isProcessing} />
+            <ShaderOverlay
+              width={displayWidth}
+              height={displayHeight}
+              active={!!isProcessing}
+            />
           </div>
         </div>
-
-        {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
       </div>
 
       <div className="w-full py-3 border-t bg-background flex items-center justify-end pr-4 flex-shrink-0">
         <ZoomButton />
       </div>
+
+      
+      {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
     </div>
   );
 };
