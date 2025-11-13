@@ -13,7 +13,7 @@ interface EditingStore {
   clear: () => void;
   setImage: (imageUrl: string, width?: number, height?: number) => void;
   setAppliedEffect: (effect: EffectProps) => void;
-  setAppliedTool: (tool: ToolProps) => void;
+  toggleAppliedTool: (tool: ToolProps) => void;
   setResult: (result: string) => void;
   setZoom: (zoom: number) => void;
   setProcessing: (isProcessing: boolean) => void;
@@ -39,7 +39,10 @@ const useEditingStore = create<EditingStore>((set) => ({
     set({ image: { url: imageUrl, width, height } }),
 
   setAppliedEffect: (effect) => set({ appliedEffect: effect }),
-  setAppliedTool: (tool) => set({ appliedTool: tool }),
+  toggleAppliedTool: (tool) =>
+    set((state) => ({
+      appliedTool: state.appliedTool?.name === tool.name ? null : tool,
+    })),
   setResult: (result) => set({ result }),
   setZoom: (zoom) => set({ zoom }),
   setProcessing: (isProcessing) => set({ isProcessing }),
