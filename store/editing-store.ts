@@ -13,12 +13,12 @@ interface EditingStore {
   clear: () => void;
   setImage: (imageUrl: string, width?: number, height?: number) => void;
   setAppliedEffect: (effect: EffectProps) => void;
-  setAppliedTool: (tool: ToolProps) => void;
   setResult: (result: string) => void;
   setZoom: (zoom: number) => void;
   setProcessing: (isProcessing: boolean) => void;
   zoomIn: () => void;
   zoomOut: () => void;
+  setAppliedTool: (tool: ToolProps | null) => void;
 }
 
 const useEditingStore = create<EditingStore>((set) => ({
