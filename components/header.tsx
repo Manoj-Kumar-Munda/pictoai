@@ -12,19 +12,15 @@ const Header = () => {
   return (
     <header
       className={cn(
-        "flex items-center justify-between px-4 py-3 sm:p-4 fixed top-0 inset-x-0 rounded-none z-50 h-14 sm:h-16 lg:inset-x-8 xl:inset-x-12",
-        !isHome && "inset-x-0 xl:inset-x-0 lg:inset-x-0 bg-black"
+        "max-w-7xl mx-auto flex items-center justify-between px-4 border border-neutral-100 rounded-full py-3 sm:p-4 fixed inset-x-0 z-50 h-14 sm:h-16 top-0 bg-white/30 backdrop-blur-sm",
+        !isHome && "inset-x-0 xl:inset-x-0 lg:inset-x-0 bg-black text-white"
       )}
     >
       {/*logo */}
       <Link href="/" className="flex gap-2 items-center">
         {/* <Image src={logo} alt="logo" width={48} height={48} /> */}
-        <span
-          className={cn(
-            "font-semibold text-base sm:text-lg font-sans text-white"
-          )}
-        >
-          Picto AI
+        <span className={cn("font-semibold text-base sm:text-lg font-sans ")}>
+          Picto <span className="gradient-text font-bold">AI</span>
         </span>
       </Link>
 
