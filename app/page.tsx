@@ -1,26 +1,26 @@
-import Hero from "@/components/hero";
+import { DraggableEffectsCard } from "@/components/draggable-effects-card";
 
 export default function Home() {
   return (
-    <div>
-      <Hero />
+    <div className="flex items-center justify-between px-4 flex-col pt-20">
+      <div className=" lg:space-y-4 xl:space-y-8">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-balance font-bold text-center tracking-tight leading-tight md:leading-tight lg:leading-16 xl:leading-20">
+          Transform your photos
+          <br /> with{" "}
+          <span className="bg-clip-text text-transparent bg-gradient-to-b from-blue-600  via-blue-500 to-blue-800">
+            AI magic
+          </span>
+        </h1>
 
-      <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 xl:py-20 xl:space-y-10">
-        <h2 className="text-5xl font-bold">Explore powerful AI tools</h2>
-
-        <div className="flex">
-          <div className="border w-72 h-80 relative"
-            style={{
-              backgroundImage: ""
-            }}
-           
-           >
-            <h3 className="left-2 bottom-2 font-geist-sans absolute font-bold">
-              AI Eraser
-            </h3>
-          </div>
-        </div>
+        <p className="text-center text-neutral-500 font-medium  xl:text-xl">
+          Unlock professional-grade editing with a single click. Effortlessly
+          <br />
+          remove backgrounds, generate stunning outfits, and enhance details
+          instantly.
+        </p>
       </div>
+
+      <DraggableEffectsCard />
     </div>
   );
 }

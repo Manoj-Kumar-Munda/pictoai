@@ -34,7 +34,9 @@ export default function RootLayout({
       <head>
         <link rel="icon" type="image/png" href="/logo.png" />
       </head>
-      <body className={`antialiased ${inter.variable} ${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`antialiased ${inter.variable} ${geistSans.variable} ${geistMono.variable} max-w-7xl mx-auto`}
+      >
         <ThemeProvider>
           <div className="min-h-svh ">
             <Header />
