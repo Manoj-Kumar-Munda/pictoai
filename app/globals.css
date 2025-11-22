@@ -51,19 +51,36 @@
   --animate-shimmer: shimmer 1.5s ease-in-out infinite;
 
   @keyframes orbit {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   @keyframes pulseCore {
-    0% { transform: scale(0.95); opacity: 0.6; }
-    50% { transform: scale(1.05); opacity: 1; }
-    100% { transform: scale(0.95); opacity: 0.6; }
+    0% {
+      transform: scale(0.95);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0.95);
+      opacity: 0.6;
+    }
   }
 
   @keyframes shimmer {
-    0% { transform: translateX(-35%); }
-    100% { transform: translateX(135%); }
+    0% {
+      transform: translateX(-35%);
+    }
+    100% {
+      transform: translateX(135%);
+    }
   }
 }
 
@@ -145,6 +162,15 @@
   }
 }
 
+@layer utilities {
+  .gradient-primary {
+    @apply bg-gradient-to-b from-blue-600  via-blue-500 to-blue-800;
+  }
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-blue-600  via-blue-500 to-blue-800;
+  }
+}
+
 .active-effect {
   background: linear-gradient(
     135deg,
@@ -152,5 +178,7 @@
     rgba(34, 211, 238, 0.85) 50%,
     rgba(103, 232, 249, 0.9) 100%
   );
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.3), 0 0 40px rgba(6, 182, 212, 0.2);
+  box-shadow:
+    0 0 20px rgba(34, 211, 238, 0.3),
+    0 0 40px rgba(6, 182, 212, 0.2);
 }

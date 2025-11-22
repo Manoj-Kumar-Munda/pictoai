@@ -258,9 +258,6 @@ const ImageEditorCanvas = () => {
       <div className="w-full py-3 border-t bg-background flex items-center justify-end pr-4 flex-shrink-0">
         <ZoomButton />
       </div>
-
-      
-      {currentTool?.tool_id === "eraser" && <MagicEraserPopup />}
     </div>
   );
 };

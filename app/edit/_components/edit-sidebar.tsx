@@ -5,10 +5,22 @@ import Heading from "@/components/heading";
 
 import EditTool from "@/components/edit-tool";
 import { tools } from "@/constants/tools";
+import useEditingStore from "@/store/editing-store";
+import MagicEraserPopup from "@/tools/magic-eraser";
+import SidebarWrapper from "./sidebar-wrapper";
 
 const EditSidebar = () => {
+  const appliedTool = useEditingStore((state) => state.appliedTool);
+
+  if (appliedTool) {
+    return (
+      <SidebarWrapper>
+        {appliedTool?.tool_id === "eraser" && <MagicEraserPopup />}
+      </SidebarWrapper>
+    );
+  }
   return (
-    <aside className="h-full shrink-0 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 border-r border-zinc-800/50 px-4 py-4 text-white space-y-5 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+    <SidebarWrapper>
       <div className="space-y-2">
         <Heading className="border-b border-zinc-800/50 pb-1">Tools</Heading>
         <div className="flex flex-col gap-1.5">
@@ -54,7 +66,7 @@ const EditSidebar = () => {
           </div>
         </div>
       </div>
-    </aside>
+    </SidebarWrapper>
   );
 };
 
