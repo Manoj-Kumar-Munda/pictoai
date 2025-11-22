@@ -19,7 +19,7 @@ const DownloadButton = ({
     <Button
       onClick={handleDownload}
       className={cn(
-        "gap-1.5 rounded-md text-neutral-600 active-effect cursor-pointer",
+        "gap-1.5 rounded-md  bg-blue-500 text-white cursor-pointer hover:bg-blue-600 shadow-md transition-all duration-300",
         className
       )}
     >
