@@ -163,6 +163,9 @@
 }
 
 @layer utilities {
+  .gradient-primary {
+    @apply bg-gradient-to-b from-blue-600  via-blue-500 to-blue-800;
+  }
   .gradient-text {
     @apply bg-clip-text text-transparent bg-gradient-to-b from-blue-600  via-blue-500 to-blue-800;
   }
