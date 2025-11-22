@@ -19,11 +19,11 @@ const DownloadButton = ({
     <Button
       onClick={handleDownload}
       className={cn(
-        "gap-1.5 rounded-md  bg-blue-500 text-white cursor-pointer hover:bg-blue-600 shadow-md transition-all duration-300",
+        "gap-1.5 rounded-md  bg-blue-600 text-white cursor-pointer hover:bg-blue-700 shadow-md transition-all duration-300 text-xs font-semibold",
         className
       )}
     >
-      <span className="text-xs font-bold">Download</span>
+      <span>Download</span>
       <Download className="size-3.5" strokeWidth={3} />
     </Button>
   );

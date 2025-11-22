@@ -1,4 +1,5 @@
 import Heading from "@/components/heading";
+import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from "@/constants/tools";
 import useApplyEffect from "@/hooks/useSendChat";
@@ -49,8 +50,8 @@ const MagicEraserPopup = () => {
         <span className="ml-auto text-xs font-medium">{brushSize}</span>
       </div>
 
-      <button
-        className="mt-4 flex gap-2 w-full active-effect text-xs font-semibold items-center justify-center py-1.5 rounded text-neutral-700 cursor-pointer hover:brightness-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      <Button
+        className="mt-4 flex gap-2 w-full text-xs font-semibold items-center justify-center rounded text-white cursor-pointer hover:brightness-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-blue-600 hover:bg-blue-700"
         onClick={handleRemove}
         disabled={status === "streaming" || status === "submitted"}
       >
@@ -58,7 +59,7 @@ const MagicEraserPopup = () => {
         {status === "streaming" || status === "submitted"
           ? "Removing..."
           : "Remove"}
-      </button>
+      </Button>
     </div>
   );
 };
