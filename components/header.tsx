@@ -37,8 +37,7 @@ const Header = () => {
         ease: "easeInOut",
       }}
       className={cn(
-        "max-w-7xl mx-auto flex items-center justify-between px-4 md:;pl-8 py-3  fixed inset-x-0 z-50 h-14 sm:h-16 top-0 bg-white/30 dark:bg-white/10 backdrop-blur-sm",
-        !isHome && "inset-x-0 xl:inset-x-0 lg:inset-x-0 bg-black text-white"
+        "max-w-7xl mx-auto flex items-center justify-between px-4 md:pl-8 py-3 fixed inset-x-0 z-50 h-14 sm:h-16 top-0 bg-white/30 dark:bg-white/10 backdrop-blur-sm",        !isHome && "inset-x-0 xl:inset-x-0 lg:inset-x-0 bg-black text-white"
       )}
     >
       {/*logo */}

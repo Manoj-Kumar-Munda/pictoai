@@ -46,8 +46,8 @@ export function DraggableEffectsCard() {
             urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL!}
             src={item.image}
             alt={item.title}
-            width={200}
-            height={200}
+            width={320}
+            height={320}
             className="pointer-events-none relative z-10 h-80 w-80 object-cover"
           />
         </DraggableCardBody>
