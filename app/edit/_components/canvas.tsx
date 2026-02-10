@@ -1,4 +1,8 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+"use client";
+
+import { memo, useEffect, useRef, useState, useCallback } from "react";
+import type { KonvaEventObject } from "konva/lib/Node";
+import type Konva from "konva";
 import {
   Stage,
   Layer,
@@ -8,22 +12,15 @@ import {
   Line,
 } from "react-konva";
 import useImage from "use-image";
-import { KonvaEventObject } from "konva/lib/Node";
-import Konva from "konva";
 import useEditingStore from "@/store/editing-store";
 import useInPaintStore from "@/store/inpaint-store";
 import DownloadButton from "./download-button";
 import ZoomButton from "./zoom-button";
-import MagicEraserPopup from "@/tools/magic-eraser";
 import ShaderOverlay from "./shader-overlay";
 
-const URLImage = ({ src, ...rest }: { src: string } & StageProps) => {
-  const [image] = useImage(src, "anonymous");
-  if (image) return <KonvaImage image={image} {...rest} />;
-  return null;
-};
+// --- Constants ---
 
-const PADDING = 80; // Padding for initial zoom calculation
+const PADDING = 80;
 const LINE_CONFIG = {
   stroke: "#df4b26",
   tension: 0.5,
@@ -31,186 +28,167 @@ const LINE_CONFIG = {
   lineJoin: "round" as const,
   globalCompositeOperation: "source-over" as const,
   opacity: 0.5,
-};
+} as const;
+
+// --- Sub-components ---
+
+/** Renders a remote image onto the Konva canvas. Memoised to avoid re-loading
+ *  the image when unrelated parent state changes (e.g. zoom, lines). */
+const URLImage = memo(({ src, ...rest }: { src: string } & StageProps) => {
+  const [image] = useImage(src, "anonymous");
+  if (!image) return null;
+  return <KonvaImage image={image} {...rest} />;
+});
+URLImage.displayName = "URLImage";
+
+/** Top toolbar — only depends on `image.url`. Isolated so zoom / line changes
+ *  don't force a re-render of the download button. */
+const CanvasToolbar = memo(() => {
+  const url = useEditingStore((s) => s.image.url);
+  return (
+    <div className="w-full border-b border-editor-border/40 bg-editor-surface/80 backdrop-blur-sm px-4 py-3 flex items-center justify-end flex-shrink-0">
+      <DownloadButton url={url} />
+    </div>
+  );
+});
+CanvasToolbar.displayName = "CanvasToolbar";
+
+/** Bottom toolbar — only depends on zoom primitives. */
+const CanvasFooter = memo(() => (
+  <div className="w-full py-3 border-t border-editor-border/40 bg-editor-surface/80 backdrop-blur-sm flex items-center justify-end pr-4 flex-shrink-0">
+    <ZoomButton />
+  </div>
+));
+CanvasFooter.displayName = "CanvasFooter";
+
+// --- Helpers ---
+
+/** Convert screen-space pointer position to image-local coordinates. */
+function getLocalPoint(
+  stage: Konva.Stage,
+  screenPoint: { x: number; y: number },
+) {
+  const imageGroup = stage.findOne("#imageGroup");
+  if (!imageGroup) return null;
+  return imageGroup.getAbsoluteTransform().copy().invert().point(screenPoint);
+}
+
+// --- Main Component ---
 
 const ImageEditorCanvas = () => {
+  // -- Granular store selectors (rerender-defer-reads) --
+  const image = useEditingStore((s) => s.image);
+  const zoom = useEditingStore((s) => s.zoom);
+  const setZoom = useEditingStore((s) => s.setZoom);
+  const isProcessing = useEditingStore((s) => s.isProcessing);
+  const currentToolId = useEditingStore((s) => s.appliedTool?.tool_id);
+
+  const lines = useInPaintStore((s) => s.lines);
+  const setLines = useInPaintStore((s) => s.setLines);
+  const brushSize = useInPaintStore((s) => s.brushSize);
+
+  // -- Local state --
   const [stageDimensions, setStageDimensions] = useState({
     width: 800,
     height: 600,
   });
-  const [hasInitializedZoom, setHasInitializedZoom] = useState(false);
 
+  // -- Refs --
   const containerRef = useRef<HTMLDivElement>(null);
-  const isDrawing = useRef(false);
   const stageRef = useRef<Konva.Stage>(null);
+  const isDrawing = useRef(false);
+  const prevImageUrl = useRef<string>("");
 
-  const {
-    appliedTool: currentTool,
-    image,
-    setImage,
-    zoom,
-    setZoom,
-    isProcessing,
-  } = useEditingStore();
-  const { lines, setLines, clearLines, brushSize } = useInPaintStore();
+  // Keep mutable refs for values used inside pointer callbacks so the
+  // callbacks themselves remain stable and don't re-create on every stroke
+  // point (rerender-use-ref-transient-values).
+  const linesRef = useRef(lines);
+  linesRef.current = lines;
 
-  // Helper to get local coordinates from screen coordinates
-  const getLocalPoint = useCallback(
-    (stage: Konva.Stage, screenPoint: { x: number; y: number }) => {
-      const imageGroup = stage.findOne("#imageGroup");
-      if (!imageGroup) return null;
-      const transform = imageGroup.getAbsoluteTransform().copy().invert();
-      return transform.point(screenPoint);
-    },
-    []
-  );
-
-  // Merge painted lines with the image
-  const mergeImageWithLines = useCallback(() => {
-    if (lines.length === 0) return;
-
-    const tempStage = new Konva.Stage({
-      container: document.createElement("div"),
-      width: image.width,
-      height: image.height,
-    });
-
-    const tempLayer = new Konva.Layer();
-    tempStage.add(tempLayer);
-
-    const tempImage = new window.Image();
-    tempImage.crossOrigin = "anonymous";
-
-    tempImage.onload = () => {
-      const konvaImage = new Konva.Image({
-        image: tempImage,
-        width: image.width,
-        height: image.height,
-      });
-      tempLayer.add(konvaImage);
-
-      lines.forEach((line) => {
-        const konvaLine = new Konva.Line({
-          points: line.points,
-          ...LINE_CONFIG,
-          strokeWidth: brushSize,
-        });
-        tempLayer.add(konvaLine);
-      });
-
-      tempLayer.batchDraw();
-
-      const uri = tempStage.toDataURL({ mimeType: "image/png", quality: 1 });
-      setImage(uri, image.width, image.height);
-      clearLines();
-      tempStage.destroy();
-    };
-
-    tempImage.onerror = () => {
-      console.error("Failed to load image for merging");
-      tempStage.destroy();
-    };
-
-    tempImage.src = image.url;
-  }, [lines, brushSize, image, setImage, clearLines]);
-
-  // Mouse event handlers for drawing
+  // -- Pointer handlers (stable — they read refs, not state) --
   const handleMouseDown = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
-      if (currentTool?.tool_id !== "eraser") return;
-
+      if (currentToolId !== "eraser") return;
       isDrawing.current = true;
+
       const stage = e.target.getStage();
-      if (!stage) return;
+      const point = stage?.getPointerPosition();
+      if (!stage || !point) return;
 
-      const point = stage.getPointerPosition();
-      if (!point) return;
+      const local = getLocalPoint(stage, point);
+      if (!local) return;
 
-      const localPoint = getLocalPoint(stage, point);
-      if (!localPoint) return;
-
-      setLines([...lines, { points: [localPoint.x, localPoint.y] }]);
+      setLines([...linesRef.current, { points: [local.x, local.y] }]);
     },
-    [currentTool, lines, setLines, getLocalPoint]
+    [currentToolId, setLines],
   );
 
   const handleMouseMove = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
-      if (!isDrawing.current || currentTool?.tool_id !== "eraser") return;
+      if (!isDrawing.current || currentToolId !== "eraser") return;
 
       const stage = e.target.getStage();
-      if (!stage) return;
+      const point = stage?.getPointerPosition();
+      if (!stage || !point) return;
 
-      const point = stage.getPointerPosition();
-      if (!point) return;
+      const local = getLocalPoint(stage, point);
+      const current = linesRef.current;
+      if (!local || current.length === 0) return;
 
-      const localPoint = getLocalPoint(stage, point);
-      if (!localPoint || lines.length === 0) return;
-
-      const newLines = [...lines];
-      const lastIndex = newLines.length - 1;
-      newLines[lastIndex] = {
-        ...newLines[lastIndex],
-        points: [...newLines[lastIndex].points, localPoint.x, localPoint.y],
+      const lastIdx = current.length - 1;
+      const updated = [...current];
+      updated[lastIdx] = {
+        ...updated[lastIdx],
+        points: [...updated[lastIdx].points, local.x, local.y],
       };
-      setLines(newLines);
+      setLines(updated);
     },
-    [currentTool, lines, setLines, getLocalPoint]
+    [currentToolId, setLines],
   );
 
   const handleMouseUp = useCallback(() => {
-    if (!isDrawing.current) return;
     isDrawing.current = false;
-    mergeImageWithLines();
-  }, [mergeImageWithLines]);
+  }, []);
 
-  // Initialize stage dimensions and zoom when image loads or changes
+  // -- Effects --
+
+  // Initialise stage dimensions and calculate fit-to-view zoom when image
+  // source changes. A ref tracks the previous URL so we only reset zoom on
+  // actual image changes, not on every render.
   useEffect(() => {
-    if (!containerRef.current || !image.url || !image.width || !image.height) {
-      return;
-    }
+    const container = containerRef.current;
+    if (!container || !image.url || !image.width || !image.height) return;
 
-    const containerWidth = containerRef.current.offsetWidth;
-    const containerHeight = containerRef.current.offsetHeight;
+    setStageDimensions({ width: image.width, height: image.height });
 
-    // Calculate and set initial zoom only once per image
-    if (!hasInitializedZoom) {
-      const scaleX = (containerWidth - PADDING) / image.width;
-      const scaleY = (containerHeight - PADDING) / image.height;
-      const initialZoom = Math.min(scaleX, scaleY, 1);
+    // Only recalculate zoom when the image source actually changes.
+    if (image.url === prevImageUrl.current) return;
+    prevImageUrl.current = image.url;
 
-      setZoom(initialZoom);
-      setHasInitializedZoom(true);
-    }
-  }, [image.url, image.width, image.height, setZoom, hasInitializedZoom]);
+    const containerW = container.offsetWidth;
+    const containerH = container.offsetHeight;
+    const scaleX = (containerW - PADDING) / image.width;
+    const scaleY = (containerH - PADDING) / image.height;
+    setZoom(Math.min(scaleX, scaleY, 1));
+  }, [image.url, image.width, image.height, setZoom]);
 
-  // Reset zoom initialization flag when image changes
-  useEffect(() => {
-    setHasInitializedZoom(false);
-    // Update stage dimensions
-    if (image) {
-      setStageDimensions({ width: image.width, height: image.height });
-    }
-  }, [image]);
-
-  // Calculate display dimensions
+  // -- Derived values --
   const displayWidth = stageDimensions.width * zoom;
   const displayHeight = stageDimensions.height * zoom;
 
   return (
-    <div className="w-full h-full flex flex-col relative">
-      <div className="w-full border-b bg-background px-4 py-3 flex items-center justify-end flex-shrink-0">
-        <DownloadButton url={image.url} />
-      </div>
+    <div
+      className="w-full h-full flex flex-col relative"
+      role="application"
+      aria-label="Image editor canvas"
+    >
+      <CanvasToolbar />
 
-      {/* Canvas Area */}
+      {/* Canvas area */}
       <div ref={containerRef} className="flex-1 min-h-0 overflow-auto relative">
         <div
           className="absolute inset-0 flex items-center justify-center"
-          style={{
-            minWidth: `${displayWidth}px`,
-            minHeight: `${displayHeight}px`,
-          }}
+          style={{ minWidth: displayWidth, minHeight: displayHeight }}
         >
           <div
             className="relative"
@@ -245,7 +223,6 @@ const ImageEditorCanvas = () => {
               </Layer>
             </Stage>
 
-            {/* Shader overlay when processing */}
             <ShaderOverlay
               width={displayWidth}
               height={displayHeight}
@@ -255,9 +232,7 @@ const ImageEditorCanvas = () => {
         </div>
       </div>
 
-      <div className="w-full py-3 border-t bg-background flex items-center justify-end pr-4 flex-shrink-0">
-        <ZoomButton />
-      </div>
+      <CanvasFooter />
     </div>
   );
 };
