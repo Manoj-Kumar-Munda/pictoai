@@ -23,6 +23,7 @@ const EditSidebar = () => {
   return (
     <SidebarWrapper>
       <div className="space-y-5">
+        {/* Tools */}
         <div className="space-y-2.5">
           <Heading>Tools</Heading>
           <div className="flex flex-col gap-2">
@@ -32,10 +33,13 @@ const EditSidebar = () => {
           </div>
         </div>
 
+        {/* Filters */}
         <Category title="Filters" effects={filterEffects} />
 
+        {/* Effects */}
         <Category title="Effects" effects={effects} />
 
+        {/* Restyle */}
         <Category title="Restyle" effects={Restyles} />
       </div>
     </SidebarWrapper>
