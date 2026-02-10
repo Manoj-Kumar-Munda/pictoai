@@ -43,6 +43,27 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
+  /* Editor design tokens */
+  --color-editor-surface: var(--editor-surface);
+  --color-editor-surface-secondary: var(--editor-surface-secondary);
+  --color-editor-surface-tertiary: var(--editor-surface-tertiary);
+  --color-editor-surface-hover: var(--editor-surface-hover);
+  --color-editor-border: var(--editor-border);
+  --color-editor-border-hover: var(--editor-border-hover);
+  --color-editor-text: var(--editor-text);
+  --color-editor-text-strong: var(--editor-text-strong);
+  --color-editor-text-secondary: var(--editor-text-secondary);
+  --color-editor-text-muted: var(--editor-text-muted);
+  --color-editor-accent: var(--editor-accent);
+  --color-editor-accent-light: var(--editor-accent-light);
+  --color-editor-accent-deep: var(--editor-accent-deep);
+  --color-editor-accent-text: var(--editor-accent-text);
+  --color-editor-accent-muted: var(--editor-accent-muted);
+  --color-editor-accent-subtle: var(--editor-accent-subtle);
+  --color-editor-action: var(--editor-action);
+  --color-editor-action-deep: var(--editor-action-deep);
+  --color-editor-action-hover: var(--editor-action-hover);
+
   /* Custom keyframes for creative loader */
   --animate-orbit: orbit 4s linear infinite;
   --animate-orbit-reverse: orbit 6s linear infinite reverse;
@@ -116,6 +137,27 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Editor tokens — light */
+  --editor-surface: oklch(1 0 0);
+  --editor-surface-secondary: oklch(0.985 0.002 247);
+  --editor-surface-tertiary: oklch(0.967 0.001 264);
+  --editor-surface-hover: oklch(0.928 0.006 264);
+  --editor-border: oklch(0.928 0.006 264);
+  --editor-border-hover: oklch(0.872 0.01 258);
+  --editor-text: oklch(0.373 0.01 258);
+  --editor-text-strong: oklch(0.278 0.006 264);
+  --editor-text-secondary: oklch(0.551 0.018 264);
+  --editor-text-muted: oklch(0.707 0.015 264);
+  --editor-accent: oklch(0.789 0.154 194);
+  --editor-accent-light: oklch(0.75 0.14 210);
+  --editor-accent-deep: oklch(0.623 0.214 259);
+  --editor-accent-text: oklch(0.52 0.105 196);
+  --editor-accent-muted: oklch(0.609 0.126 196);
+  --editor-accent-subtle: oklch(0.97 0.015 196);
+  --editor-action: oklch(0.546 0.245 262);
+  --editor-action-deep: oklch(0.488 0.243 264);
+  --editor-action-hover: oklch(0.623 0.214 259);
 }
 
 .dark {
@@ -150,6 +192,27 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Editor tokens — dark */
+  --editor-surface: oklch(0.21 0.006 285);
+  --editor-surface-secondary: oklch(0.21 0.006 285);
+  --editor-surface-tertiary: oklch(0.274 0.006 286);
+  --editor-surface-hover: oklch(0.37 0.013 285);
+  --editor-border: oklch(0.37 0.013 285);
+  --editor-border-hover: oklch(0.442 0.017 285);
+  --editor-text: oklch(0.871 0.006 286);
+  --editor-text-strong: oklch(0.967 0.001 286);
+  --editor-text-secondary: oklch(0.705 0.015 286);
+  --editor-text-muted: oklch(0.552 0.016 285);
+  --editor-accent: oklch(0.789 0.154 194);
+  --editor-accent-light: oklch(0.75 0.14 210);
+  --editor-accent-deep: oklch(0.623 0.214 259);
+  --editor-accent-text: oklch(0.865 0.127 196);
+  --editor-accent-muted: oklch(0.789 0.154 194);
+  --editor-accent-subtle: oklch(0.25 0.03 196);
+  --editor-action: oklch(0.546 0.245 262);
+  --editor-action-deep: oklch(0.488 0.243 264);
+  --editor-action-hover: oklch(0.623 0.214 259);
 }
 
 @layer base {
@@ -168,16 +231,4 @@
   .gradient-text {
     @apply bg-clip-text text-transparent bg-gradient-to-b from-blue-600  via-blue-500 to-blue-800;
   }
-}
-
-.active-effect {
-  background: linear-gradient(
-    135deg,
-    rgba(6, 182, 212, 0.9) 0%,
-    rgba(34, 211, 238, 0.85) 50%,
-    rgba(103, 232, 249, 0.9) 100%
-  );
-  box-shadow:
-    0 0 20px rgba(34, 211, 238, 0.3),
-    0 0 40px rgba(6, 182, 212, 0.2);
 }

@@ -8,6 +8,7 @@ import { tools } from "@/constants/tools";
 import useEditingStore from "@/store/editing-store";
 import MagicEraserPopup from "@/tools/magic-eraser";
 import SidebarWrapper from "./sidebar-wrapper";
+import { EffectProps } from "@/types";
 
 const EditSidebar = () => {
   const appliedTool = useEditingStore((state) => state.appliedTool);
@@ -21,52 +22,42 @@ const EditSidebar = () => {
   }
   return (
     <SidebarWrapper>
-      <div className="space-y-2">
-        <Heading className="border-b border-zinc-800/50 pb-1">Tools</Heading>
-        <div className="flex flex-col gap-1.5">
-          {tools.map((tool) => (
-            <EditTool key={tool.name} {...tool} />
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Heading className="border-b border-zinc-800/50 pb-1">Filters</Heading>
-        <div className="">
-          <div className="grid grid-cols-3 gap-2">
-            {filterEffects.map((effect) => (
-              <AIEffectCard key={effect.name} {...effect} />
+      <div className="space-y-5">
+        <div className="space-y-2.5">
+          <Heading>Tools</Heading>
+          <div className="flex flex-col gap-2">
+            {tools.map((tool) => (
+              <EditTool key={tool.name} {...tool} />
             ))}
           </div>
         </div>
-      </div>
 
-      <div className="space-y-2.5">
-        <Heading className="border-b border-zinc-800/50 pb-1.5">
-          Aesthetics
-        </Heading>
-        <div className="overflow-y-auto max-h-[40vh]">
-          <div className="grid grid-cols-3 gap-2">
-            {effects.map((swap) => (
-              <AIEffectCard key={swap.name} {...swap} />
-            ))}
-          </div>
-        </div>
-      </div>
+        <Category title="Filters" effects={filterEffects} />
 
-      <div className="space-y-2.5">
-        <Heading className="border-b border-zinc-800/50 pb-1.5">
-          Restyle
-        </Heading>
-        <div className="overflow-y-auto max-h-[40vh]">
-          <div className="grid grid-cols-3 gap-2">
-            {Restyles.map((restyle) => (
-              <AIEffectCard key={restyle.name} {...restyle} />
-            ))}
-          </div>
-        </div>
+        <Category title="Effects" effects={effects} />
+
+        <Category title="Restyle" effects={Restyles} />
       </div>
     </SidebarWrapper>
+  );
+};
+
+const Category = ({
+  title,
+  effects,
+}: {
+  title: string;
+  effects: EffectProps[];
+}) => {
+  return (
+    <div className="space-y-2.5">
+      <Heading>{title}</Heading>
+      <div className="grid grid-cols-3 gap-2">
+        {effects.map((effect) => (
+          <AIEffectCard key={effect.name} {...effect} />
+        ))}
+      </div>
+    </div>
   );
 };
 

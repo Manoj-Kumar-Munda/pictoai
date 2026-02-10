@@ -19,12 +19,15 @@ const DownloadButton = ({
     <Button
       onClick={handleDownload}
       className={cn(
-        "gap-1.5 rounded-md  bg-blue-600 text-white cursor-pointer hover:bg-blue-700 shadow-md transition-all duration-300 text-xs font-semibold",
-        className
+        "gap-2 rounded-lg px-4 py-2 text-xs font-semibold cursor-pointer",
+        "bg-gradient-to-r from-editor-action to-editor-action-deep hover:from-editor-action-hover hover:to-editor-action",
+        "text-white shadow-md shadow-editor-action/20 hover:shadow-lg hover:shadow-editor-action/30",
+        "transition-all duration-300 hover:-translate-y-[1px]",
+        className,
       )}
     >
+      <Download className="size-3.5" strokeWidth={2.5} />
       <span>Download</span>
-      <Download className="size-3.5" strokeWidth={3} />
     </Button>
   );
 };

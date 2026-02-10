@@ -39,13 +39,17 @@ const Header = () => {
       className={cn(
         "max-w-7xl mx-auto flex items-center justify-between px-4 md:pl-8 py-3 fixed inset-x-0 z-50 h-14 sm:h-16 top-0 bg-white/30 dark:bg-white/10 backdrop-blur-sm",
         !isHome && "inset-x-0 xl:inset-x-0 lg:inset-x-0 bg-black text-white",
-        !isScrolled && "bg-transparent dark:bg-transparent"
+        !isScrolled && "bg-transparent dark:bg-transparent",
       )}
     >
       {/*logo */}
       <Link href="/" className="flex gap-2 items-center">
         {/* <Image src={logo} alt="logo" width={48} height={48} /> */}
-        <span className={cn("font-semibold text-base sm:text-lg font-sans ")}>
+        <span
+          className={cn(
+            "font-semibold text-base sm:text-lg font-sans text-primary",
+          )}
+        >
           Picto <span className="gradient-text font-bold">AI</span>
         </span>
       </Link>
@@ -57,7 +61,7 @@ const Header = () => {
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar> */}
-        <Button className="bg-blue-600 rounded-full text-white">
+        <Button className="bg-blue-600 rounded-full text-white hover:bg-blue-700 transition-colors duration-300">
           Get started
         </Button>
       </div>

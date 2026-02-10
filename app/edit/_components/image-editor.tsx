@@ -31,7 +31,7 @@ const EditorCanvas = () => {
   if (image?.url) {
     return (
       <div className="w-full h-full">
-        <div className="w-full h-full bg-white rounded-lg border border-gray-300 overflow-hidden">
+        <div className="w-full h-full bg-editor-surface overflow-hidden">
           <ImageEditorCanvas />
         </div>
       </div>

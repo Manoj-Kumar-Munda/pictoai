@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import useEditingStore from "@/store/editing-store";
 import { UploadError } from "@/types";
 import { Image } from "@imagekit/next";
+import { ImagePlus, Upload } from "lucide-react";
 import type { DropzoneInputProps, DropzoneRootProps } from "react-dropzone";
 
 const ImageUploadZone = ({
@@ -19,15 +20,23 @@ const ImageUploadZone = ({
   error: UploadError | null;
 }) => {
   return (
-    <div className="w-full h-full bg-white p-4 rounded-lg">
+    <div className="w-full h-full bg-editor-surface p-5">
       <div
         {...getRootProps()}
         className={cn(
-          "w-full h-full bg-gray-100 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer transition-colors",
-          isDragActive && "border-blue-500 bg-blue-50",
-          !isDragActive &&
-            "border-gray-400 hover:border-gray-500 hover:bg-gray-50",
-          isLoading && "pointer-events-none opacity-60"
+          "w-full h-full flex flex-col items-center justify-center rounded-2xl cursor-pointer transition-all duration-300",
+          "border-2 border-dashed",
+          isDragActive && [
+            "border-editor-accent bg-editor-accent-subtle/50",
+            "shadow-inner shadow-editor-accent/10",
+          ],
+          !isDragActive && [
+            "border-editor-border",
+            "bg-editor-surface-secondary/50",
+            "hover:border-editor-border-hover",
+            "hover:bg-editor-surface-secondary",
+          ],
+          isLoading && "pointer-events-none opacity-60",
         )}
         role="button"
         aria-label="Upload image"
@@ -37,38 +46,71 @@ const ImageUploadZone = ({
 
         <div className="text-center max-w-md px-4">
           {isLoading ? (
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-gray-600">Loading image...</p>
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative size-12">
+                <div className="absolute inset-0 rounded-full border-[3px] border-editor-border" />
+                <div className="absolute inset-0 rounded-full border-[3px] border-editor-accent border-t-transparent animate-spin" />
+              </div>
+              <p className="text-sm text-editor-text-secondary font-medium">
+                Loading image...
+              </p>
             </div>
           ) : (
             <>
-              <p className="mb-2 text-xs font-bold text-neutral-500">
-                Drop or click to upload an image (max. 10MB)
-              </p>
+              <div className="flex flex-col items-center gap-3 mb-4">
+                <div className="size-14 rounded-2xl bg-editor-surface-tertiary flex items-center justify-center border border-editor-border/50">
+                  <ImagePlus
+                    className="size-6 text-editor-text-muted"
+                    strokeWidth={1.5}
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-editor-text-secondary">
+                    Drop or click to upload
+                  </p>
+                  <p className="text-xs text-editor-text-muted mt-0.5">
+                    PNG, JPG, or WebP · Max 10 MB
+                  </p>
+                </div>
+              </div>
+
               <button
                 type="button"
-                className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors font-medium text-sm "
+                className={cn(
+                  "inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold",
+                  "bg-gradient-to-r from-editor-action to-editor-action-deep hover:from-editor-action-hover hover:to-editor-action",
+                  "text-white shadow-md shadow-editor-action/20 hover:shadow-lg hover:shadow-editor-action/30",
+                  "transition-all duration-300 hover:-translate-y-[1px]",
+                )}
               >
+                <Upload className="size-4" strokeWidth={2} />
                 Choose Image
               </button>
 
-              <div className="mt-4 space-y-2 mx-auto">
-                <p className="text-gray-400 text-xs font-semibold">
-                  Choose a picture to start with
-                </p>
-                {/* on clicking it, it will be stored in the editing store */}
-
-                {DEMO_IMAGES.map((img) => (
-                  <DemoImage key={img.src} img={img} />
-                ))}
-              </div>
+              {DEMO_IMAGES.length > 0 && (
+                <div className="mt-6 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="flex-1 h-px bg-gradient-to-r from-transparent via-editor-border to-transparent" />
+                    <p className="text-[11px] text-editor-text-muted font-medium uppercase tracking-wider">
+                      Or try a sample
+                    </p>
+                    <span className="flex-1 h-px bg-gradient-to-r from-transparent via-editor-border to-transparent" />
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    {DEMO_IMAGES.map((img) => (
+                      <DemoImage key={img.src} img={img} />
+                    ))}
+                  </div>
+                </div>
+              )}
             </>
           )}
 
           {error && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{error.message}</p>
+            <div className="mt-4 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl">
+              <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+                {error.message}
+              </p>
             </div>
           )}
         </div>
@@ -82,14 +124,13 @@ const DemoImage = ({ img }: { img: (typeof DEMO_IMAGES)[number] }) => {
 
   const setDemoImage = async (
     e: React.MouseEvent<HTMLDivElement>,
-    url: string
+    url: string,
   ) => {
     e.stopPropagation();
 
     const imageUrl = `${process.env
       .NEXT_PUBLIC_IMAGEKIT_URL!}/tr:orig-true${url}`;
 
-    // Preload to get natural width/height so canvas scales correctly
     try {
       const imgEl = new window.Image();
       imgEl.crossOrigin = "anonymous";
@@ -99,7 +140,7 @@ const DemoImage = ({ img }: { img: (typeof DEMO_IMAGES)[number] }) => {
             resolve({ w: imgEl.naturalWidth, h: imgEl.naturalHeight });
           imgEl.onerror = () => reject(new Error("Failed to load demo image"));
           imgEl.src = imageUrl;
-        }
+        },
       );
 
       setImage(imageUrl, dims.w, dims.h);
@@ -111,7 +152,7 @@ const DemoImage = ({ img }: { img: (typeof DEMO_IMAGES)[number] }) => {
     <div
       role="button"
       tabIndex={0}
-      className="flex items-center justify-center gap-2"
+      className="group relative overflow-hidden rounded-xl border border-editor-border/60 transition-all duration-300 hover:shadow-md hover:shadow-black/8 hover:-translate-y-0.5 hover:border-editor-border-hover"
       onClick={(e: React.MouseEvent<HTMLDivElement>) =>
         setDemoImage(e, img.src)
       }
@@ -122,7 +163,9 @@ const DemoImage = ({ img }: { img: (typeof DEMO_IMAGES)[number] }) => {
         alt={img.alt}
         width={72}
         height={72}
+        className="size-16 object-cover transition-transform duration-500 group-hover:scale-110"
       />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </div>
   );
 };
