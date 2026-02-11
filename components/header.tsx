@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { useMotionValueEvent, useScroll, motion } from "motion/react";
@@ -15,6 +15,7 @@ const Header = () => {
   const { scrollY } = useScroll();
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const router = useRouter();
 
   const isHome = pathname === "/";
 
@@ -66,7 +67,13 @@ const Header = () => {
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar> */}
-          <Button className="bg-blue-600 rounded-full text-white hover:bg-blue-700 transition-colors duration-300">
+          <Button
+            className={cn(
+              "bg-blue-600 rounded-full text-white hover:bg-blue-700 transition-colors duration-300",
+              isHome ? "" : "hidden",
+            )}
+            onClick={() => router.push("/edit")}
+          >
             Get started
           </Button>
         </div>
