@@ -38,7 +38,7 @@ export default function RootLayout({
         className={`antialiased ${inter.variable} ${geistSans.variable} ${geistMono.variable} max-w-7xl mx-auto`}
       >
         <ThemeProvider>
-          <div className="min-h-svh ">
+          <div className="min-h-svh space-y-2">
             <Header />
             {children}
           </div>

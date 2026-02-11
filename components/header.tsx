@@ -26,7 +26,7 @@ const Header = () => {
     }
   });
   return (
-    <div className="fixed inset-x-0 top-0 z-50 flex justify-center pt-3 pointer-events-none">
+    <div className="fixed inset-x-0 top-0 z-50 flex justify-center pointer-events-none">
       <motion.header
         initial={false}
         animate={{
@@ -41,14 +41,12 @@ const Header = () => {
           mass: 0.8,
         }}
         className={cn(
-          "pointer-events-auto flex items-center justify-between px-4 md:pl-6 h-14 sm:h-16",
+          "pointer-events-auto flex items-center justify-between px-4 md:pl-6 h-14 sm:h-16 border border-black",
           "backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-500 ease-out",
-          "max-w-7xl w-full mx-auto will-change-transform",
+          "max-w-7xl w-full mx-auto will-change-transform bg-primary dark:bg-primary",
           isScrolled
-            ? "border border-gray-200/60 dark:border-white/10 bg-white/40 dark:bg-black/60"
+            ? "border border-gray-200/60 dark:border-white/10 bg-white/40 dark:bg-white/10"
             : "border border-transparent bg-transparent dark:bg-transparent",
-          !isHome && !isScrolled && "bg-black text-white dark:bg-background",
-          !isHome && isScrolled && "text-foreground",
         )}
       >
         {/*logo */}
